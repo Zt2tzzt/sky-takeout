@@ -1,11 +1,14 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
@@ -82,5 +85,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateUser(currentId); // 设置修改用户
 
         return employeeMapper.insert(employee);
+    }
+
+    /**
+     * 此方法用于：分页查询员工信息
+     *
+     * @param employeePageQueryDTO 分页查询条件
+     * @return PageResult<Object>
+     */
+    @Override
+    public Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        // 开始分页查询
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+
+        return employeeMapper.selectEmpByPage(employeePageQueryDTO);
     }
 }

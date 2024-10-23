@@ -1,14 +1,19 @@
 package com.sky.config;
 
 import com.sky.interceptor.JwtTokenAdminInterceptor;
+import com.sky.json.JacksonObjectMapper;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 /**
  * 配置类，注册 web 层相关组件
@@ -16,7 +21,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @Slf4j
 public class WebMvcConfiguration implements WebMvcConfigurer {
-
     @Autowired
     private JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
 
@@ -74,4 +78,21 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }*/
+
+    /**
+     * 此方法用于：扩展 Spring MVC 框架的消息转换器，对后端返回的数据，进行统一处理
+     *
+     * @param converters 消息转换器集合
+     */
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        log.info("扩展消息转换器：{}", converters);
+
+        // 创建一个消息转换器对象
+        MappingJackson2HttpMessageConverter covert = new MappingJackson2HttpMessageConverter();
+        // 为消息转换器对象，设置对象转换器，底层使用 Jackson 将 Java 对象转为 json
+        covert.setObjectMapper(new JacksonObjectMapper());
+        // 将自己的消息转化器加入容器中
+        converters.add(0, covert);
+    }
 }
