@@ -19,7 +19,7 @@
 
 ## 二、Swagger
 
-[Swagger](https://swagger.io/>) 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务，它的主要作用是：
+[Swagger](https://swagger.io/>) 是一个规范和完整的框架，用于生成、描述、调用可视化 RESTful 风格的 Web 服务，它的主要作用是：
 
 - 使得前后端分离开发更加方便，有利于团队协作；
 - 自动生成在线接口文档，降低后端开发人员编写接口文档的负担；
@@ -174,7 +174,6 @@ import java.io.Serializable;
 @Data
 @Schema(description = "员工登录时传递的数据模型")
 public class EmployeeLoginDTO implements Serializable {
-
     @Schema(description = "用户名")
     private String username;
 
