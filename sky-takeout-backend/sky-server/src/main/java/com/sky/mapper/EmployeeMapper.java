@@ -16,7 +16,7 @@ public interface EmployeeMapper {
      * @param username
      * @return
      */
-    @Select("SELECT * FROM employee WHERE username = #{username}")
+    @Select("SELECT * FROM employee WHERE username = #{username} AND status = 1")
     Employee getByUsername(String username);
 
     /**
@@ -31,8 +31,16 @@ public interface EmployeeMapper {
 
     /**
      * 此方法用于：分页查询员工信息
+     *
      * @param employeePageQueryDTO 查询条件
      * @return Page<Employee>
      */
     Page<Employee> selectEmpByPage(EmployeePageQueryDTO employeePageQueryDTO);
+
+    /**
+     * 此方法用于：修改员工信息
+     *
+     * @param employee 要修改的员工对象
+     */
+    int update(Employee employee);
 }

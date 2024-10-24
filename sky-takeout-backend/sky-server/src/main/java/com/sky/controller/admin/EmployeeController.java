@@ -109,4 +109,20 @@ public class EmployeeController {
         PageResult<Employee> result = new PageResult<>(PageEmps.getTotal(), PageEmps.getResult());
         return Result.success(result);
     }
+
+    /**
+     * 此方法用于：启用/禁用员工账号
+     *
+     * @param status 状态
+     * @param id     员工 Id
+     * @return Result
+     */
+    @Operation(summary = "启用禁用员工账号")
+    @PostMapping("/status/{status}")
+    public Result<String> enableAndDisable(@PathVariable Integer status, Long id) {
+        log.info("启用/禁用员工账号，员工id为：{},状态为：{}", id, status);
+
+        int num = employeeService.enableAndDisable(status, id);
+        return num > 0 ? Result.success("成功修改" + num + "条数据") : Result.error("修改失败");
+    }
 }

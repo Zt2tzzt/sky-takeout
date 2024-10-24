@@ -100,4 +100,21 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employeeMapper.selectEmpByPage(employeePageQueryDTO);
     }
+
+    /**
+     * 此方法用于：启用/禁用员工账号
+     *
+     * @param status 启用/禁用状态
+     * @param id     员工 Id
+     * @return 操作记录数
+     */
+    @Override
+    public int enableAndDisable(Integer status, Long id) {
+        Employee employee = Employee.builder()
+                .status(status)
+                .id(id).build();
+
+        // 动态更新，在一个 UPDATE 语句中，处理多个字段的跟新。
+        return employeeMapper.update(employee);
+    }
 }

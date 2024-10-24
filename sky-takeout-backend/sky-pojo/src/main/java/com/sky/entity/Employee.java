@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Employee implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    @Schema(description = "员工 Id")
+    @Schema(description = "员工Id")
     private Long id;
     @Schema(description = "用户名")
     private String username;
