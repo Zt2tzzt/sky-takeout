@@ -16,7 +16,7 @@ public interface EmployeeMapper {
      * @param username
      * @return
      */
-    @Select("SELECT * FROM employee WHERE username = #{username} AND status = 1")
+    @Select("SELECT * FROM employee WHERE username = #{username}")
     Employee getByUsername(String username);
 
     /**
