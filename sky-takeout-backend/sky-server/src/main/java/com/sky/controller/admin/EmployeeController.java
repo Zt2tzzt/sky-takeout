@@ -125,4 +125,34 @@ public class EmployeeController {
         int num = employeeService.enableAndDisable(status, id);
         return num > 0 ? Result.success("成功修改" + num + "条数据") : Result.error("修改失败");
     }
+
+    /**
+     * 此方法用于：根据Id查询员工
+     *
+     * @param id 员工Id
+     * @return Result
+     */
+    @Operation(summary = "根据Id查询员工")
+    @GetMapping("/{id}")
+    public Result<Employee> empById(@PathVariable Long id) {
+        log.info("根据Id查询员工，员工Id为：{}", id);
+
+        Employee employee = employeeService.empById(id);
+        return Result.success(employee);
+    }
+
+    /**
+     * 此方法用于：编辑员工信息
+     *
+     * @param employeeDTO 员工信息
+     * @return Result
+     */
+    @Operation(summary = "编辑员工信息")
+    @PutMapping
+    public Result<String> modifyEmp(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("编辑员工信息，员工信息为：{}", employeeDTO);
+
+        int num = employeeService.modifyEmp(employeeDTO);
+        return num > 0 ? Result.success("成功编辑" + num + "条员工数据") : Result.error("编辑失败");
+    }
 }

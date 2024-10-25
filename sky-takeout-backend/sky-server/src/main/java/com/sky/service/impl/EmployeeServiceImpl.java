@@ -117,4 +117,35 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 动态更新，在一个 UPDATE 语句中，处理多个字段的跟新。
         return employeeMapper.update(employee);
     }
+
+    /**
+     * 此方法用于：根据 Id 查询员工信息
+     *
+     * @return 员工信息
+     */
+    @Override
+    public Employee empById(Long id) {
+        Employee employee = employeeMapper.selectEmpById(id);
+        employee.setPassword("****");
+        return employee;
+    }
+
+    /**
+     * 此方法用于：编辑员工信息
+     *
+     * @param employeeDTO 编辑的员工信息
+     * @return 操作记录数
+     */
+    @Override
+    public int modifyEmp(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+
+        // 属性拷贝
+        BeanUtils.copyProperties(employeeDTO, employee);
+        // 补充数据
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+
+        return employeeMapper.update(employee);
+    }
 }

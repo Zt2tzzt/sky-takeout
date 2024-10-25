@@ -40,4 +40,19 @@ public interface EmployeeService {
      * @return 操作记录数
      */
     int enableAndDisable(Integer status, Long id);
+
+    /**
+     * 此方法用于：根据 Id 查询员工信息
+     *
+     * @return 员工信息
+     */
+    Employee empById(Long id);
+
+    /**
+     * 此方法用于：编辑员工信息
+     *
+     * @param employeeDTO 编辑的员工信息
+     * @return 操作记录数
+     */
+    int modifyEmp(EmployeeDTO employeeDTO);
 }
