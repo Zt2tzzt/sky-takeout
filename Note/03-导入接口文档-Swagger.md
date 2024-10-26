@@ -35,7 +35,7 @@ Spring 已经将 Swagger 纳入自身的标准，建立了 Spring-swagger 项目
 
 knife4j 依赖，是为 Java MVC 框架集成 Swagger 生成 Api 文档的增强解决方案，前身是 swagger-bootstrap-ui；
 
-> kni4j 取名是希望它能像一把匕首一样小巧，轻量，并且功能强悍!
+> kni4j 取名是希望它能像一把匕首一样小巧，轻量，并且功能强悍！
 
 目前，一般都使用 knife4j 框架。使用步骤：
 
@@ -141,7 +141,7 @@ OpenAPI3 注解
 | @Parameter(hidden = true) 、@Operation(hidden = true)、@Hidden | 排除或隐藏 api                                              |
 | @Schema(description = "参数描述")                            | 用在实体（Entity、DTO、VO）类或实体属性上                   |
 
-@Tag 注解使用：
+`@Tag` 注解使用：
 
 sky-takeout-backend/sky-server/src/main/java/com/sky/controller/admin/EmployeeController.java
 
@@ -150,7 +150,7 @@ sky-takeout-backend/sky-server/src/main/java/com/sky/controller/admin/EmployeeCo
 public class EmployeeController {……}
 ```
 
-@Operation 注解使用：
+`@Operation` 注解使用：
 
 sky-takeout-backend/sky-server/src/main/java/com/sky/controller/admin/EmployeeController.java
 
@@ -159,7 +159,7 @@ sky-takeout-backend/sky-server/src/main/java/com/sky/controller/admin/EmployeeCo
 public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {……}
 ```
 
-@Schema 注解使用：
+`@Schema` 注解使用：
 
 sky-takeout-backend/sky-pojo/src/main/java/com/sky/dto/EmployeeLoginDTO.java
 

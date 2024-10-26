@@ -86,7 +86,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
      * @param converters 消息转换器集合
      */
     @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+    public void extendMessageConverters(@NonNull List<HttpMessageConverter<?>> converters) {
         log.info("扩展消息转换器：{}", converters);
 
         // 创建一个消息转换器对象
@@ -94,6 +94,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         // 为消息转换器对象，设置对象转换器，底层使用 Jackson 将 Java 对象转为 json
         covert.setObjectMapper(new JacksonObjectMapper());
         // 将自己的消息转化器加入容器中
-        converters.add(0, covert);
+        //converters.add(0, covert);
     }
 }
