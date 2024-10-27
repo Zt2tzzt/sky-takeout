@@ -1,8 +1,10 @@
 package com.sky.interceptor;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.context.BaseContext;
 import com.sky.properties.JwtProperties;
+import com.sky.result.Result;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +55,10 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             return true;
         } catch (Exception ex) {
             //4、不通过，响应401状态码
+            Result<Object> result = Result.error("NOT_LOGIN");
+            String jsonRes = JSONObject.toJSONString(result);
             response.setStatus(401);
+            response.getWriter().write(jsonRes);
             return false;
         }
     }
