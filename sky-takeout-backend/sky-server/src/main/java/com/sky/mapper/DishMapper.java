@@ -1,12 +1,18 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
 import com.sky.annotation.AutoFill;
+import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.enumeration.OperationType;
+import com.sky.vo.DishVO;
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface DishMapper {
@@ -30,4 +36,45 @@ public interface DishMapper {
             "VALUES (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})")
     @AutoFill(OperationType.INSERT)
     int insert(Dish dish);
+
+    /**
+     * 此方法用于：分页查询菜品
+     *
+     * @param dishPageQueryDTO 分页查询条件
+     * @return Page<DishVO>
+     */
+    Page<DishVO> selectWithPage(DishPageQueryDTO dishPageQueryDTO);
+
+    /**
+     * 此方法用于：根据菜品id查询菜品数据
+     *
+     * @param id 菜品 Id
+     * @return Dish
+     */
+    @Select("SELECT id, name, category_id, price, image, description, status, create_time, update_time, create_user, update_user FROM dish WHERE id = #{id}")
+    Dish selectById(Long id);
+
+    /**
+     * 此方法用于：批量删除菜品
+     *
+     * @param ids 菜品 Id
+     * @return 删除记录数
+     */
+    int deleteBatchById(List<Long> ids);
+
+    /**
+     * 根据菜品id查询菜品起售的个数
+     *
+     * @param ids 菜品id
+     * @return 起售的个数
+     */
+    int countStatusByIds(List<Long> ids);
+
+    /**
+     * 此方法用于：修改菜品
+     * @param dish 菜品对象
+     * @return 修改记录数
+     */
+    @AutoFill(OperationType.UPDATE)
+    int update(Dish dish);
 }
