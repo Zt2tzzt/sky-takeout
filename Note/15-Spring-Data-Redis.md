@@ -94,7 +94,7 @@ public class RedisConfiguration {
 
 ## 三、Spring Data Redis 使用
 
-### 1.String 类型操作
+### 1.字符串类型操作
 
 sky-takeout-backend/sky-server/src/test/java/com/sky/SpringDataRedisTest.java
 
@@ -117,21 +117,121 @@ public class SpringDataRedisTest {
 
     @Test
     public void testString() {
+        ValueOperations<Object, Object> valueOperations = redisTemplate.opsForValue(); // //string 数据操作
+
         // SET
-        redisTemplate.opsForValue().set("city", "北京");
+        valueOperations.set("city", "北京");
 
         // GET
-        String city = (String) redisTemplate.opsForValue().get("city");
-        log.info("city: {}", city);
+        String city = (String) valueOperations.get("city");
+        log.info("city: {}", city); // city: 北京
 
         // SETEX
-        redisTemplate.opsForValue().set("code", "1234", 3, TimeUnit.MINUTES);
+        valueOperations.set("code", "1234", 3, TimeUnit.MINUTES);
 
         // SETNX
-        redisTemplate.opsForValue().setIfAbsent("name", "wee");
-        redisTemplate.opsForValue().setIfAbsent("name", "tamako");
+        Boolean isSet1 = valueOperations.setIfAbsent("name", "wee");
+        Boolean isSet2 = valueOperations.setIfAbsent("name", "tamako");
+        log.info("isSet1: {}, isSet2: {}", isSet1, isSet2); // isSet1: true, isSet2: false
     }
 }
 ```
 
 - 因为设置 key 的序列化器，可以为键传入对象（Object），会被序列化为字符串存入 Redis。
+
+### 2.哈希类型操作
+
+sky-takeout-backend/sky-server/src/test/java/com/sky/SpringDataRedisTest.java
+
+```java
+package com.sky;
+
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.*;
+
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+@SpringBootTest
+@Slf4j
+public class SpringDataRedisTest {
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
+
+    @Test
+    public void testHash() {
+        HashOperations<Object, Object, Object> hashOperations = redisTemplate.opsForHash();
+
+        // HSET
+        hashOperations.put("100", "name", "wee");
+        hashOperations.put("100", "age", "26");
+
+        // HGET
+        String name = (String) hashOperations.get("100", "name");
+        log.info("name: {}", name); // name: wee
+
+        // HKEYS
+        Set<Object> keys = hashOperations.keys("100");
+        log.info("keys: {}", keys); // keys: [name, age]
+
+        // HVALS
+        List<Object> values = hashOperations.values("100");
+        log.info("values: {}", values); // values: [wee, 26]
+
+        // HDEL
+        Long idDelete = hashOperations.delete("100", "age");
+        log.info("idDelete: {}", idDelete); // idDelete: 1
+    }
+}
+```
+
+### 3.列表类型操作
+
+sky-takeout-backend/sky-server/src/test/java/com/sky/SpringDataRedisTest.java
+
+```java
+package com.sky;
+
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.*;
+
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+@SpringBootTest
+@Slf4j
+public class SpringDataRedisTest {
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
+
+    @Test
+    public void testList() {
+        ListOperations<Object, Object> listOperations = redisTemplate.opsForList();
+
+        // LPUSH
+        Long size1 = listOperations.leftPushAll("mylist", new String[]{"a"}, new String[]{"b"}, new String[]{"c"});
+        Long size2 = listOperations.leftPush("mylist", "d");
+        log.info("size1: {}, size2: {}", size1, size2); // size1: 3, size2: 4
+
+        // LRANGE
+        List<Object> mylist = listOperations.range("mylist", 0, -1);
+        log.info("mylist: {}", mylist); // mylist: [d, [Ljava.lang.String;@5edd2170, [Ljava.lang.String;@327ac23, [Ljava.lang.String;@32db94fb]
+
+        // RPOP
+        Object popEle = listOperations.rightPop("mylist");
+        log.info("popEle: {}", popEle); // popEle: [a]
+
+        // LLEN
+        Long size = listOperations.size("mylist");
+        log.info("size: {}", size); // size: 3
+    }
+}
+```
