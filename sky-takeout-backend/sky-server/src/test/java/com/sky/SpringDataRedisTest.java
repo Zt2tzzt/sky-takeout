@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.*;
 
 import java.util.List;
@@ -98,5 +99,97 @@ public class SpringDataRedisTest {
         // LLEN
         Long size = listOperations.size("mylist");
         log.info("size: {}", size); // size: 3
+    }
+
+    /**
+     * 操作集合类型的数据
+     */
+    @Test
+    public void testSet() {
+        SetOperations<Object, Object> setOperations = redisTemplate.opsForSet();
+
+        // SADD
+        setOperations.add("set1", "a", "b", "c", "d");
+        setOperations.add("set2", "a", "b", "x", "y");
+
+        // SMEMBERS
+        Set<Object> members = setOperations.members("set1");
+        log.info("members: {}", members); // members: [a, b, c, d]
+
+        // SCARD
+        Long size = setOperations.size("set1");
+        log.info("size: {}", size); // size: 4
+
+        // SINTER 交集
+        Set<Object> intersect = setOperations.intersect("set1", "set2");
+        log.info("intersect: {}", intersect); // intersect: [a, b]
+
+        // SUNION 并集
+        Set<Object> union = setOperations.union("set1", "set2");
+        log.info("union: {}", union); // union: [a, b, c, d, x, y]
+
+        // SREM
+        Long removeNum = setOperations.remove("set1", "a", "b");
+        log.info("removeNum: {}", removeNum); // removeNum: 2
+    }
+
+    /**
+     * 操作有序集合类型的数据
+     */
+    @Test
+    public void testZset() {
+        ZSetOperations<Object, Object> zSetOperations = redisTemplate.opsForZSet();
+
+        // ZADD
+        Boolean isAdd1 = zSetOperations.add("zset1", "a", 10);
+        Boolean idAdd2 = zSetOperations.add("zset1", "b", 12);
+        Boolean isAdd3 = zSetOperations.add("zset1", "c", 9);
+        log.info("isAdd1: {}, idAdd2: {}, isAdd3: {}", isAdd1, idAdd2, isAdd3); // isAdd1: true, idAdd2: true, isAdd3: true
+
+        // ZRANGE
+        Set<Object> zset1 = zSetOperations.range("zset1", 0, -1);
+        log.info("zset1: {}", zset1); // zset1: [c, a, b]
+
+        // ZINCRBY
+        Double csore = zSetOperations.incrementScore("zset1", "c", 10);
+        log.info("csore: {}", csore); // csore: 19.0
+
+        // ZREM
+        Long removNum = zSetOperations.remove("zset1", "a", "b");
+        log.info("removNum: {}", removNum); // removNum: 2
+    }
+
+    /**
+     * 通用命令操作
+     */
+    @Test
+    public void testCommon() {
+        //KEYS EXISTS TYPE DEL
+        Set<Object> keys = redisTemplate.keys("*");
+        log.info("keys: {}", keys); // keys: [mylist, code, zset1, city, name]
+
+        // EXISTS TYPE DEL
+        Boolean name = redisTemplate.hasKey("name");
+        log.info("name: {}", name); // name: true
+
+        // EXISTS TYPE DEL
+        Boolean set1 = redisTemplate.hasKey("set1");
+        log.info("set1: {}", set1); // set1: false
+
+        // TYPE
+        assert keys != null;
+        for (Object key : keys) {
+            DataType type = redisTemplate.type(key);
+            assert type != null;
+            log.info("type.name(): {}", type.name());
+        }
+        // type.name(): LIST
+        // type.name(): STRING
+        // type.name(): ZSET
+        // type.name(): STRING
+        // type.name(): STRING
+
+        Boolean idDel = redisTemplate.delete("mylist");
+        log.info("idDel: {}", idDel); // idDel: true
     }
 }

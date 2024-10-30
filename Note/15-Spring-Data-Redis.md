@@ -2,7 +2,7 @@
 
 ## 一、Redis 的 Java 客户端
 
-在 java 程序中，操作 Redis需要使用 Redis 的 Java 客户端，就像使用 JDBC 操作 MySQL 数据库一样。
+在 java 程序中，操作 Redis 需要使用 Redis 的 Java 客户端，就像使用 JDBC 操作 MySQL 数据库一样。
 
 Redis 的 Java 客户端很多，常用的几种：
 
@@ -90,11 +90,11 @@ public class RedisConfiguration {
 - 设置 Redis 连接工厂对象，Spring data redis 起步依赖会创建连接工厂的 Bean 对象，并放入 IOC 容器中。
 - 设置 key 的序列化器后，用 Java 程序存储 key 时不会出现乱码。
 
-> 当前配置类不是必须的，因为 Spring Boot 框架会自动装配 `RedisTemplate` 对象，但是默认的key序列化器为 `JdkSerializationRedisSerializer`，导致存到 Redis 后的数据和原始数据有差别，故设置为 `StringRedisSerializer` 序列化器。
+> 当前配置类不是必须的，因为 Spring Boot 框架会自动装配 `RedisTemplate` 对象，但是默认的 key 序列化器为 `JdkSerializationRedisSerializer`，导致存到 Redis 里的数据和原始数据有差别，故设置为 `StringRedisSerializer` 序列化器。
 
 ## 三、Spring Data Redis 使用
 
-### 1.字符串类型操作
+### 1.字符串（String）类型操作
 
 sky-takeout-backend/sky-server/src/test/java/com/sky/SpringDataRedisTest.java
 
@@ -137,9 +137,9 @@ public class SpringDataRedisTest {
 }
 ```
 
-- 因为设置 key 的序列化器，可以为键传入对象（Object），会被序列化为字符串存入 Redis。
+- 因为设置了 key 的序列化器，所以可以为键传入对象（Object），它会被序列化为字符串存入 Redis。
 
-### 2.哈希类型操作
+### 2.哈希（Hash）类型操作
 
 sky-takeout-backend/sky-server/src/test/java/com/sky/SpringDataRedisTest.java
 
@@ -189,7 +189,7 @@ public class SpringDataRedisTest {
 }
 ```
 
-### 3.列表类型操作
+### 3.列表（List）类型操作
 
 sky-takeout-backend/sky-server/src/test/java/com/sky/SpringDataRedisTest.java
 
@@ -233,5 +233,123 @@ public class SpringDataRedisTest {
         Long size = listOperations.size("mylist");
         log.info("size: {}", size); // size: 3
     }
+}
+```
+
+### 3.集合（Set）类型操作
+
+sky-takeout-backend/sky-server/src/test/java/com/sky/SpringDataRedisTest.java
+
+```java
+……
+
+/**
+ * 操作集合类型的数据
+ */
+@Test
+public void testSet() {
+    SetOperations<Object, Object> setOperations = redisTemplate.opsForSet();
+
+    // SADD
+    setOperations.add("set1", "a", "b", "c", "d");
+    setOperations.add("set2", "a", "b", "x", "y");
+
+    // SMEMBERS
+    Set<Object> members = setOperations.members("set1");
+    log.info("members: {}", members); // members: [a, b, c, d]
+
+    // SCARD
+    Long size = setOperations.size("set1");
+    log.info("size: {}", size); // size: 4
+
+    // SINTER 交集
+    Set<Object> intersect = setOperations.intersect("set1", "set2");
+    log.info("intersect: {}", intersect); // intersect: [a, b]
+
+    // SUNION 并集
+    Set<Object> union = setOperations.union("set1", "set2");
+    log.info("union: {}", union); // union: [a, b, c, d, x, y]
+
+    // SREM
+    Long removeNum = setOperations.remove("set1", "a", "b");
+    log.info("removeNum: {}", removeNum); // removeNum: 2
+}
+
+……
+```
+
+### 4.有序集合（ZSet）类型操作
+
+sky-takeout-backend/sky-server/src/test/java/com/sky/SpringDataRedisTest.java
+
+```java
+……
+
+/**
+ * 操作有序集合类型的数据
+ */
+@Test
+public void testZset() {
+    ZSetOperations<Object, Object> zSetOperations = redisTemplate.opsForZSet();
+
+    // ZADD
+    Boolean isAdd1 = zSetOperations.add("zset1", "a", 10);
+    Boolean idAdd2 = zSetOperations.add("zset1", "b", 12);
+    Boolean isAdd3 = zSetOperations.add("zset1", "c", 9);
+    log.info("isAdd1: {}, idAdd2: {}, isAdd3: {}", isAdd1, idAdd2, isAdd3); // isAdd1: true, idAdd2: true, isAdd3: true
+
+    // ZRANGE
+    Set<Object> zset1 = zSetOperations.range("zset1", 0, -1);
+    log.info("zset1: {}", zset1); // zset1: [c, a, b]
+
+    // ZINCRBY
+    Double csore = zSetOperations.incrementScore("zset1", "c", 10);
+    log.info("csore: {}", csore); // csore: 19.0
+
+    // ZREM
+    Long removNum = zSetOperations.remove("zset1", "a", "b");
+    log.info("removNum: {}", removNum); // removNum: 2
+}
+
+……
+```
+
+### 5.通用操作
+
+sky-takeout-backend/sky-server/src/test/java/com/sky/SpringDataRedisTest.java
+
+```java
+/**
+ * 通用命令操作
+ */
+@Test
+public void testCommon() {
+    //KEYS EXISTS TYPE DEL
+    Set<Object> keys = redisTemplate.keys("*");
+    log.info("keys: {}", keys); // keys: [mylist, code, zset1, city, name]
+
+    // EXISTS TYPE DEL
+    Boolean name = redisTemplate.hasKey("name");
+    log.info("name: {}", name); // name: true
+
+    // EXISTS TYPE DEL
+    Boolean set1 = redisTemplate.hasKey("set1");
+    log.info("set1: {}", set1); // set1: false
+
+    // TYPE
+    assert keys != null;
+    for (Object key : keys) {
+        DataType type = redisTemplate.type(key);
+        assert type != null;
+        log.info("type.name(): {}", type.name());
+    }
+    // type.name(): LIST
+    // type.name(): STRING
+    // type.name(): ZSET
+    // type.name(): STRING
+    // type.name(): STRING
+
+    Boolean isdDel = redisTemplate.delete("mylist");
+    log.info("isdDel: {}", isdDel); // isdDel: true
 }
 ```
