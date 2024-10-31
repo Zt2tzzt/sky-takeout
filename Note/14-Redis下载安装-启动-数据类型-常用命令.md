@@ -171,11 +171,11 @@ Redis 存储的是 key-value 结构的数据，其中 key 是字符串类型，v
 
 ## 五、Redis 常用命令
 
-Redis 鱼 MySQL 不同，要根据不同的数据类型，执行不同的命令。
+Redis 与 MySQL 不同，要根据不同的数据类型，执行不同的命令。
 
 ### 5.1.字符串命令
 
-Redis 中字符串类型常用命令：\
+Redis 中字符串类型常用命令：
 
 - `SET key value`；设置指定 key 的值。
 - `GET key`；获取指定 key 的值。

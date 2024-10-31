@@ -117,7 +117,7 @@ public class SpringDataRedisTest {
 
     @Test
     public void testString() {
-        ValueOperations<Object, Object> valueOperations = redisTemplate.opsForValue(); // //string 数据操作
+        ValueOperations<Object, Object> valueOperations = redisTemplate.opsForValue(); // string 数据操作
 
         // SET
         valueOperations.set("city", "北京");
