@@ -158,9 +158,9 @@ RedisInsight 是 Redis 官方出品的可视化管理工具。
 
 ## 四、Redis 数据类型
 
-Redis 存储的是 key-value 结构的数据，其中 key 是字符串类型，value 有五种常用的数据类型：
+Redis 存储的是 key-value 结构的数据，其中 key 是字符串类型，value 有以下五种常用的数据类型：
 
-- 字符串 string：普通字符串，Redis 中最简单的数据类型。
+- 字符串 string：表示普通字符串，Redis 中最简单的数据类型。
 - 哈希 hash，也叫散列，类似于 Java 中的 HashMap 结构。
 - 列表 list，按照插入顺序排序，可以有重复元素，类似于 Java 中的 LinkedList
 - 集合 set，无序集合，没有重复元素，类似于 Java 中的 HashSet
@@ -254,4 +254,4 @@ Redis 的通用命令，是不分数据类型的，都可以使用的命令：
 - `KEYS pattern`；查找所有符合给定模式（pattern）的 key。
 - `EXISTS key`；检查给定 key 是否存在。
 - `TYPE key`；返回 key 所储存的值的类型。
-- `DEL key1 [key2] ……`；该命令用于在 key 存在是删除 key。
+- `DEL key1 [key2] ……`；该命令用于在 key 存在时删除 key。

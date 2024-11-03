@@ -20,6 +20,7 @@ spring:
       database: 0
 
 
+
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
@@ -49,3 +50,17 @@ sky:
     access-key-secret: ${sky.alioss.access-key-secret}
     bucket-name: ${sky.alioss.bucket-name}
     endpoint: ${sky.alioss.endpoint}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: "admin"
+      packages-to-scan: "com.sky.controller.admin"
+    - group: "user"
+      packages-to-scan: "com.sky.controller.user"
+      

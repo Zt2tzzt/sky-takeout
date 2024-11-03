@@ -12,11 +12,11 @@ Redis 的 Java 客户端很多，常用的几种：
 
 Spring 对 Redis 客户端 Jedis、Lettuce 进行了整合，提供了 Spring Data Redis，
 
-- Spring Boot 项目中还提供了对应的 Starter，即 spring-boot-starter-data-redis。
+- Spring Boot 项目中还提供了对应的 Starter，即 `spring-boot-starter-data-redis`。
 
 ## 二、Spring Data Redis 引入
 
-[Spring Data Redis](https://spring.io/projects/spring-data-redis) 是 Spring 的一部分，提供了在 Spring 应用中通过简单的配置，就可以访问 Redis 服务，对 Redis 底层开发包进行了高度封装。
+[Spring Data Redis](https://spring.io/projects/spring-data-redis) 是 Spring 的一部分，在 Spring 应用中通过简单的配置，就可以访问 Redis 服务，对 Redis 底层开发包进行了高度封装。
 
 在 Spring 项目中，可以使用 Spring Data Redis 来简化 Redis 操作。
 
@@ -58,6 +58,8 @@ Spring Data Redis 中提供了一个高度封装的类：`RedisTemplate`，对�
 - `HashOperations`：hash 类型的数据操作。
 - `ListOperations`：list 类型的数据操作。
 
+编写配置类 `RedisConfiguration` 用于生成 redisTemplate 对象。
+
 sky-takeout-backend/sky-server/src/main/java/com/sky/config/RedisConfiguration.java
 
 ```java
@@ -90,7 +92,7 @@ public class RedisConfiguration {
 - 设置 Redis 连接工厂对象，Spring data redis 起步依赖会创建连接工厂的 Bean 对象，并放入 IOC 容器中。
 - 设置 key 的序列化器后，用 Java 程序存储 key 时不会出现乱码。
 
-> 当前配置类不是必须的，因为 Spring Boot 框架会自动装配 `RedisTemplate` 对象，但是默认的 key 序列化器为 `JdkSerializationRedisSerializer`，导致存到 Redis 里的数据和原始数据有差别，故设置为 `StringRedisSerializer` 序列化器。
+> 当前配置类不是必须的，因为 Spring Boot 框架会自动装配 `RedisTemplate` 对象，但是默认的 key 序列化器为 `JdkSerializationRedisSerializer`，导致存到 Redis 里的数据和原始数据有差别，故手动设置为 `StringRedisSerializer` 序列化器。
 
 ## 三、Spring Data Redis 使用
 
@@ -328,11 +330,11 @@ public void testCommon() {
     Set<Object> keys = redisTemplate.keys("*");
     log.info("keys: {}", keys); // keys: [mylist, code, zset1, city, name]
 
-    // EXISTS TYPE DEL
+    // EXISTS
     Boolean name = redisTemplate.hasKey("name");
     log.info("name: {}", name); // name: true
 
-    // EXISTS TYPE DEL
+    // EXISTS
     Boolean set1 = redisTemplate.hasKey("set1");
     log.info("set1: {}", set1); // set1: false
 
@@ -349,6 +351,7 @@ public void testCommon() {
     // type.name(): STRING
     // type.name(): STRING
 
+    // DEL
     Boolean isdDel = redisTemplate.delete("mylist");
     log.info("isdDel: {}", isdDel); // isdDel: true
 }

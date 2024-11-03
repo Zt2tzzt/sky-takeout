@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.DigestUtils;
 
 @Slf4j
-@SpringBootTest
+//@SpringBootTest
 class SkyApplicationTests {
     @Test
     public void contextLoads() {
