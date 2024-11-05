@@ -24,9 +24,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class AutoFillAspect {
     @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation(com.sky.annotation.AutoFill)")
-    public void autoFillPointcut() {
-
-    }
+    public void autoFillPointcut() {}
 
     /**
      * 此方法用于：在前置通知中，为公共字段赋值。
