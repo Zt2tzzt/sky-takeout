@@ -8,7 +8,7 @@ HttpClient 支持 HTTP 协议最新的版本和建议。
 
 ## 二、HttpClient 依赖引入
 
-在 Maven 构建的 Spring Boot 项目中，引入 HttpClient 坐标。
+在 Maven 构建的 Spring Boot 项目中，引入 HttpClient 依赖的坐标。
 
 sky-takeout-backend/sky-server/pom.xml
 
@@ -32,17 +32,17 @@ sky-takeout-backend/sky-server/pom.xml
 
 ## 三、HttpClient 的核心 API
 
-- HttpClient：Http 客户端对象类型，使用该类型对象可发起 Http 请求。
-- HttpClients：可认为是构建器，可创建 HttpClient 对象。
-- CloseableHttpClient：实现类，实现了 HttpClient 接口。
-- HttpGet：Get 方式请求类型。
-- HttpPost：Post 方式请求类型。
+- `HttpClient`：Http 客户端对象类型，使用该类型对象可发起 Http 请求。
+- `HttpClients`：可认为是构建器，可创建 `HttpClient` 对象。
+- `CloseableHttpClient`：实现类，实现了 `HttpClient` 接口。
+- `HttpGet`：Get 方式请求类型。
+- `HttpPost`：Post 方式请求类型。
 
 ## 四、HttpClient 发送请求步骤
 
-- 创建 HttpClient 对象
-- 创建 Http 请求对象
-- 调用 HttpClient 的 `execute` 方法发送请求
+- 创建 `HttpClient` 对象；
+- 创建 `HttpGet` / `HttpPost` / … 请求对象；
+- 调用 `HttpClient` 的 `execute` 方法发送请求。
 
 ## 五、HttpClient 的请求
 
@@ -175,15 +175,14 @@ import java.util.Map;
  * Http工具类
  */
 public class HttpClientUtil {
-
-    static final int TIMEOUT_MSEC = 5 * 1000;
+    private static final int TIMEOUT_MSEC = 5 * 1000;
 
     /**
      * 发送GET方式请求
      *
-     * @param url
-     * @param paramMap
-     * @return
+     * @param url      url
+     * @param paramMap 参数
+     * @return String
      */
     public static String doGet(String url, Map<String, String> paramMap) {
         // 创建Httpclient对象
@@ -215,7 +214,7 @@ public class HttpClientUtil {
             e.printStackTrace();
         } finally {
             try {
-                response.close();
+                if (response != null) response.close();
                 httpClient.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -228,14 +227,14 @@ public class HttpClientUtil {
     /**
      * 发送POST方式请求
      *
-     * @param url
-     * @param paramMap
-     * @return
-     * @throws IOException
+     * @param url      url
+     * @param paramMap 参数
+     * @return String
      */
     public static String doPost(String url, Map<String, String> paramMap) throws IOException {
         // 创建Httpclient对象
         CloseableHttpClient httpClient = HttpClients.createDefault();
+
         CloseableHttpResponse response = null;
         String resultString = "";
 
@@ -245,7 +244,7 @@ public class HttpClientUtil {
 
             // 创建参数列表
             if (paramMap != null) {
-                List<NameValuePair> paramList = new ArrayList();
+                List<NameValuePair> paramList = new ArrayList<>();
                 for (Map.Entry<String, String> param : paramMap.entrySet()) {
                     paramList.add(new BasicNameValuePair(param.getKey(), param.getValue()));
                 }
@@ -258,13 +257,11 @@ public class HttpClientUtil {
 
             // 执行http请求
             response = httpClient.execute(httpPost);
-
             resultString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        } catch (Exception e) {
-            throw e;
         } finally {
             try {
-                response.close();
+                if (response != null) response.close();
+                httpClient.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -276,10 +273,9 @@ public class HttpClientUtil {
     /**
      * 发送POST方式请求
      *
-     * @param url
-     * @param paramMap
-     * @return
-     * @throws IOException
+     * @param url      url
+     * @param paramMap 参数
+     * @return String
      */
     public static String doPost4Json(String url, Map<String, String> paramMap) throws IOException {
         // 创建Httpclient对象
@@ -294,9 +290,7 @@ public class HttpClientUtil {
             if (paramMap != null) {
                 //构造json格式数据
                 JSONObject jsonObject = new JSONObject();
-                for (Map.Entry<String, String> param : paramMap.entrySet()) {
-                    jsonObject.put(param.getKey(), param.getValue());
-                }
+                jsonObject.putAll(paramMap);
                 StringEntity entity = new StringEntity(jsonObject.toString(), "utf-8");
                 //设置请求编码
                 entity.setContentEncoding("utf-8");
@@ -311,11 +305,10 @@ public class HttpClientUtil {
             response = httpClient.execute(httpPost);
 
             resultString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        } catch (Exception e) {
-            throw e;
         } finally {
             try {
-                response.close();
+                if (response != null) response.close();
+                httpClient.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -330,6 +323,5 @@ public class HttpClientUtil {
                 .setConnectionRequestTimeout(TIMEOUT_MSEC)
                 .setSocketTimeout(TIMEOUT_MSEC).build();
     }
-
 }
 ```

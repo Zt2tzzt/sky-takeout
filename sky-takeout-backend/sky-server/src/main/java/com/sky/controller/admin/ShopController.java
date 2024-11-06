@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.*;
 public class ShopController {
     private static final String KEY = "SHOP_STATUS";
 
+    private final RedisTemplate<Object, Object> redisTemplate;
+
     @Autowired
-    private RedisTemplate<Object, Object> redisTemplate;
+    public ShopController(RedisTemplate<Object, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     @PutMapping("/{status}")
     @Operation(summary = "修改营业状态")
