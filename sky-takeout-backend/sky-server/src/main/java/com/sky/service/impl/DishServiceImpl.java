@@ -28,12 +28,27 @@ import java.util.Map;
 @Service
 @Slf4j
 public class DishServiceImpl implements DishService {
+    private final DishMapper dishMapper;
+    private final DishFlavorMapper dishFlavorMapper;
+    private final SetmealDishMapper setmealDishMapper;
+
     @Autowired
-    private DishMapper dishMapper;
-    @Autowired
-    private DishFlavorMapper dishFlavorMapper;
-    @Autowired
-    private SetmealDishMapper setmealDishMapper;
+    public DishServiceImpl(DishMapper dishMapper, DishFlavorMapper dishFlavorMapper, SetmealDishMapper setmealDishMapper) {
+        this.dishMapper = dishMapper;
+        this.dishFlavorMapper = dishFlavorMapper;
+        this.setmealDishMapper = setmealDishMapper;
+    }
+
+    private int addFlavor(DishDTO dishDTO, Dish dish) {
+        int insertNum = 0;
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && !flavors.isEmpty()) {
+            Long dishId = dish.getId(); // 获取菜品的 id
+            flavors.forEach(dishFlavor -> dishFlavor.setDishId(dishId));
+            insertNum = dishFlavorMapper.insertBatch(flavors);
+        }
+        return insertNum;
+    }
 
     /**
      * 此方法用于：新增菜品和对应的口味数据
@@ -52,13 +67,7 @@ public class DishServiceImpl implements DishService {
         int num1 = dishMapper.insert(dish);
 
         // 向菜品口味表，插入 n 条数据
-        int num2 = 0;
-        List<DishFlavor> flavors = dishDTO.getFlavors();
-        if (flavors != null && !flavors.isEmpty()) {
-            Long dishId = dish.getId(); // 获取菜品的 id
-            flavors.forEach(dishFlavor -> dishFlavor.setDishId(dishId));
-            num2 = dishFlavorMapper.insertBatch(flavors);
-        }
+        int num2 = addFlavor(dishDTO, dish);
 
         return num1 + num2;
     }
@@ -87,12 +96,6 @@ public class DishServiceImpl implements DishService {
     @Transactional
     public HashMap<String, Integer> removeBatch(List<Long> ids) {
         // 菜品状态为起售中，不能删除菜品
-        /*for (Long id : ids) {
-            Dish dish = dishMapper.selectById(id);
-            if (Objects.equals(dish.getStatus(), StatusConstant.ENABLE)) {
-                throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
-            }
-        }*/
         int i = dishMapper.countStatusByIds(ids);
         if (i > 0) throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
 
@@ -146,13 +149,7 @@ public class DishServiceImpl implements DishService {
         int j = dishFlavorMapper.deleteBatchByDishId(new ArrayList<>(List.of(dish.getId())));
 
         // 插入前端传过来的菜品口味
-        int k = 0;
-        List<DishFlavor> flavors = dishDTO.getFlavors();
-        if (flavors != null && !flavors.isEmpty()) {
-            Long dishId = dish.getId(); // 获取菜品的 id
-            flavors.forEach(dishFlavor -> dishFlavor.setDishId(dishId));
-            k = dishFlavorMapper.insertBatch(flavors);
-        }
+        int k = addFlavor(dishDTO, dish);
 
         return i + j + k;
     }

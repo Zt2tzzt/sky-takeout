@@ -2,7 +2,6 @@ package com.sky.controller.admin;
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
-import com.sky.mapper.DishMapper;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
@@ -22,10 +21,12 @@ import java.util.StringJoiner;
 @Tag(name = "菜品相关接口")
 @Slf4j
 public class DishController {
+    private final DishService dishService;
+
     @Autowired
-    private DishService dishService;
-    @Autowired
-    private DishMapper dishMapper;
+    public DishController(DishService dishService) {
+        this.dishService = dishService;
+    }
 
     /**
      * 此方法用于：新增菜品

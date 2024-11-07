@@ -14,11 +14,13 @@ Spring 对 Redis 客户端 Jedis、Lettuce 进行了整合，提供了 Spring Da
 
 - Spring Boot 项目中还提供了对应的 Starter，即 `spring-boot-starter-data-redis`。
 
-## 二、Spring Data Redis 引入
+## 二、Spring Data Redis
 
-[Spring Data Redis](https://spring.io/projects/spring-data-redis) 是 Spring 的一部分，在 Spring 应用中通过简单的配置，就可以访问 Redis 服务，对 Redis 底层开发包进行了高度封装。
+[Spring Data Redis](https://spring.io/projects/spring-data-redis) 是 Spring 的一部分，在 Spring 应用中通过简单的配置，就可以访问 Redis 服务，
 
-在 Spring 项目中，可以使用 Spring Data Redis 来简化 Redis 操作。
+在 Spring 项目中，可以使用 Spring Data Redis 来简化 Redis 操作，它对 Redis 底层开发包进行了高度封装。
+
+### 2.1.Spring Data Redis 依赖引入
 
 步骤一：在基于 Maven 构建的 Spring Boot 项目中，引入 Spring Data Redis 的起步依赖。
 
@@ -30,6 +32,8 @@ sky-takeout-backend/sky-server/pom.xml
     <artifactId>spring-boot-starter-data-redis</artifactId>
 </dependency>
 ```
+
+### 2.2.Spring Data Redis 配置文件
 
 步骤二：在项目配置文件中，进行 Redis 相关配置：
 
@@ -48,6 +52,8 @@ spring:
 
 > Redis 启动时，默认创建了 16 个数据库，分别是 db0 - db15；
 
+### 2.3.Spring Data Redis 配置类
+
 步骤三：编写配置类，创建 `RedisTemplate` 对象
 
 Spring Data Redis 中提供了一个高度封装的类：`RedisTemplate`，对相关 api 进行了归类封装，将同一类型操作封装为 operation 接口，具体分类如下：
@@ -58,7 +64,7 @@ Spring Data Redis 中提供了一个高度封装的类：`RedisTemplate`，对�
 - `HashOperations`：hash 类型的数据操作。
 - `ListOperations`：list 类型的数据操作。
 
-编写配置类 `RedisConfiguration` 用于生成 redisTemplate 对象。
+编写配置类 `RedisConfiguration` 用于生成 `redisTemplate` 对象。
 
 sky-takeout-backend/sky-server/src/main/java/com/sky/config/RedisConfiguration.java
 
