@@ -64,4 +64,28 @@
         </set>
         WHERE id = #{id}
     </update>
+
+    <select id="selectWithFlavorByCategoryId" resultType="com.sky.vo.DishVO">
+        SELECT d.id,
+               d.name,
+               d.category_id,
+               d.price,
+               d.image,
+               d.description,
+               d.status,
+               d.update_time,
+               c.name                    category_name,
+               (SELECT JSON_ARRAYAGG(
+                               JSON_OBJECT(
+                                       'id', df.id,
+                                       'dish_id', df.dish_id,
+                                       'name', df.name,
+                                       'value', df.value
+                               ))
+                FROM dish_flavor df
+                WHERE df.dish_id = d.id) flavors
+        FROM dish d
+                 LEFT JOIN category c ON d.category_id = c.id
+        WHERE d.category_id = #{id};
+    </select>
 </mapper>

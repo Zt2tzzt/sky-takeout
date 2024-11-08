@@ -140,6 +140,7 @@ public class HttpClientUtil {
                 //构造json格式数据
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.putAll(paramMap);
+
                 StringEntity entity = new StringEntity(jsonObject.toString(), "utf-8");
                 //设置请求编码
                 entity.setContentEncoding("utf-8");

@@ -46,6 +46,8 @@ sky-takeout-backend/sky-server/pom.xml
 
 ## 五、HttpClient 的请求
 
+### 5.1.GET 请求发送
+
 HttpClient 发送 GET 请求：
 
 sky-takeout-backend/sky-server/src/test/java/com/sky/HttpClientTest.java
@@ -95,6 +97,8 @@ public class HttpClientTest {
     }
 }
 ```
+
+### 5.2.POST 请求发送
 
 HttpClient 发送 POST 请求：
 
