@@ -10,10 +10,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 
 @RestController
@@ -22,10 +24,12 @@ import java.util.StringJoiner;
 @Slf4j
 public class DishController {
     private final DishService dishService;
+    private final RedisTemplate<Object, Object> redisTemplate;
 
     @Autowired
-    public DishController(DishService dishService) {
+    public DishController(DishService dishService, RedisTemplate<Object, Object> redisTemplate) {
         this.dishService = dishService;
+        this.redisTemplate = redisTemplate;
     }
 
     /**
@@ -40,8 +44,16 @@ public class DishController {
         log.info("新增菜品：{}", dishDTO);
 
         int num = dishService.saveWithFlavor(dishDTO);
-        return num > 0 ? Result.success("成功插入" + num + "条数据")
-                : Result.error("插入失败");
+
+        // 清理 Redis 缓存
+        if (num > 0) {
+            // 构造 key
+            String key = "dish_" + dishDTO.getCategoryId();
+            redisTemplate.delete(key);
+            return Result.success("成功插入" + num + "条数据");
+        } else {
+            return Result.error("插入失败");
+        }
     }
 
     /**
@@ -71,6 +83,11 @@ public class DishController {
         log.info("删除菜品 {}", ids);
 
         HashMap<String, Integer> map = dishService.removeBatch(ids);
+
+        // 将 redis 中所有的菜品缓存数据清理掉：所有以 dish_ 开头的 key
+        Set<Object> keys = redisTemplate.keys("dish_*"); // 查询时支持通配符；删除时不支持通配符
+        if (keys != null) redisTemplate.delete(keys);
+
         StringJoiner sj = new StringJoiner("；");
         map.forEach((name, num) -> sj.add(name + "已删除" + num + "条"));
         return Result.success(sj.toString());
@@ -104,7 +121,13 @@ public class DishController {
 
         int num = dishService.modifyWithFlavor(dishDTO);
 
-        return num > 0 ? Result.success("成功修改" + num + "条数据")
-                : Result.error("修改失败");
+        if (num <= 0)
+            return Result.error("修改失败");
+
+        // 将 redis 中所有的菜品缓存数据清理掉：所有以 dish_ 开头的 key
+        Set<Object> keys = redisTemplate.keys("dish_*"); // 查询时支持通配符；删除时不支持通配符
+        if (keys != null) redisTemplate.delete(keys);
+
+        return Result.success("成功修改" + num + "条数据");
     }
 }

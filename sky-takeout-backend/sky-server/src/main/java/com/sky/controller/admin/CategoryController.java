@@ -10,8 +10,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 分类管理
@@ -21,14 +23,19 @@ import java.util.List;
 @Tag(name = "分类相关接口")
 @Slf4j
 public class CategoryController {
+    private final CategoryService categoryService;
+    private final RedisTemplate<Object, Object> redisTemplate;
 
     @Autowired
-    private CategoryService categoryService;
+    public CategoryController(CategoryService categoryService, RedisTemplate<Object, Object> redisTemplate) {
+        this.categoryService = categoryService;
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      * 新增分类
-     * @param categoryDTO
-     * @return
+     * @param categoryDTO 分类数据
+     * @return  Result<String>
      */
     @PostMapping
     @Operation(summary = "新增分类")
@@ -40,21 +47,21 @@ public class CategoryController {
 
     /**
      * 分类分页查询
-     * @param categoryPageQueryDTO
-     * @return
+     * @param categoryPageQueryDTO 费雷查询条件
+     * @return Result<PageResult>
      */
     @GetMapping("/page")
     @Operation(summary = "分类分页查询")
-    public Result<PageResult> page(CategoryPageQueryDTO categoryPageQueryDTO){
+    public Result<PageResult<Category>> page(CategoryPageQueryDTO categoryPageQueryDTO){
         log.info("分页查询：{}", categoryPageQueryDTO);
-        PageResult pageResult = categoryService.pageQuery(categoryPageQueryDTO);
+        PageResult<Category> pageResult = categoryService.pageQuery(categoryPageQueryDTO);
         return Result.success(pageResult);
     }
 
     /**
      * 删除分类
-     * @param id
-     * @return
+     * @param id 分类 id
+     * @return Result<String>
      */
     @DeleteMapping
     @Operation(summary = "删除分类")
@@ -66,8 +73,8 @@ public class CategoryController {
 
     /**
      * 修改分类
-     * @param categoryDTO
-     * @return
+     * @param categoryDTO 分类数据
+     * @return Result<String>
      */
     @PutMapping
     @Operation(summary = "修改分类")
@@ -78,21 +85,26 @@ public class CategoryController {
 
     /**
      * 启用、禁用分类
-     * @param status
-     * @param id
-     * @return
+     * @param status 状态
+     * @param id 分类 id
+     * @return Result<String>
      */
     @PostMapping("/status/{status}")
     @Operation(summary = "启用禁用分类")
     public Result<String> startOrStop(@PathVariable("status") Integer status, Long id){
         categoryService.startOrStop(status,id);
+
+        // 将 redis 中分类缓存数据清理掉：以 dish_ 开头的 key
+        String key = "dish_" + id;
+        redisTemplate.delete(key);
+
         return Result.success();
     }
 
     /**
      * 根据类型查询分类
-     * @param type
-     * @return
+     * @param type 类型
+     * @return Result<List<Category>>
      */
     @GetMapping("/list")
     @Operation(summary = "根据类型查询分类")
