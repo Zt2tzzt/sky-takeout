@@ -1,6 +1,9 @@
 package com.sky.mapper;
 
+import com.sky.annotation.AutoFill;
+import com.sky.dto.SetmealDTO;
 import com.sky.entity.Setmeal;
+import com.sky.enumeration.OperationType;
 import com.sky.vo.DishItemVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -36,4 +39,12 @@ public interface SetmealMapper {
             "FROM setmeal_dish sd LEFT JOIN dish d ON sd.dish_id = d.id " +
             "WHERE sd.setmeal_id = #{setmealId}")
     List<DishItemVO> selectDishItemBySetmealId(Long setmealId);
+
+    /**
+     * 此方法用于：新增套餐，同时插入菜品数据
+     *
+     * @param setmealDTO 套餐数据
+     */
+    @AutoFill(OperationType.INSERT)
+    int insertWithDish(SetmealDTO setmealDTO);
 }

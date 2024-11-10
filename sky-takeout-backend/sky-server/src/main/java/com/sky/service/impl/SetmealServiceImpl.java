@@ -1,6 +1,9 @@
 package com.sky.service.impl;
 
+import com.sky.dto.SetmealDTO;
 import com.sky.entity.Setmeal;
+import com.sky.entity.SetmealDish;
+import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.service.SetmealService;
 import com.sky.vo.DishItemVO;
@@ -17,10 +20,12 @@ import java.util.List;
 @Slf4j
 public class SetmealServiceImpl implements SetmealService {
     private final SetmealMapper setmealMapper;
+    private final SetmealDishMapper setmealDishMapper;
 
     @Autowired
-    public SetmealServiceImpl(SetmealMapper setmealMapper) {
+    public SetmealServiceImpl(SetmealMapper setmealMapper, SetmealDishMapper setmealDishMapper) {
         this.setmealMapper = setmealMapper;
+        this.setmealDishMapper = setmealDishMapper;
     }
 
     /**
@@ -41,5 +46,17 @@ public class SetmealServiceImpl implements SetmealService {
      */
     public List<DishItemVO> getDishItemById(Long id) {
         return setmealMapper.selectDishItemBySetmealId(id);
+    }
+
+    /**
+     * 此方法用于：新增套餐
+     *
+     * @param setmealDTO 套餐
+     */
+    @Override
+    public int saveWithDish(SetmealDTO setmealDTO) {
+        int num1 = setmealMapper.insertWithDish(setmealDTO);
+        int num2 = setmealDishMapper.insertBatch(setmealDTO.getSetmealDishes());
+        return num1 + num2;
     }
 }
