@@ -22,4 +22,11 @@
             (#{sd.id},#{sd.setmealId},#{sd.dishId},#{sd.name},#{sd.price},#{sd.copies})
         </foreach>
     </insert>
+
+    <delete id="deleteBatchBySetmealId">
+        DELETE FROM setmeal_dish WHERE setmeal_id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

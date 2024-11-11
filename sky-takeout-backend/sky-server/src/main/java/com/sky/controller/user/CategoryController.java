@@ -26,8 +26,8 @@ public class CategoryController {
     /**
      * 查询分类
      *
-     * @param type
-     * @return
+     * @param type 1:菜品分类，2：套餐分类
+     * @return Result<List<Category>>
      */
     @GetMapping("/list")
     @Operation(summary = "查询分类")

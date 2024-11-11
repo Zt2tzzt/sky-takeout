@@ -1,12 +1,16 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
 import com.sky.annotation.AutoFill;
 import com.sky.dto.SetmealDTO;
+import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.DishItemVO;
+import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -47,4 +51,47 @@ public interface SetmealMapper {
      */
     @AutoFill(OperationType.INSERT)
     int insertWithDish(SetmealDTO setmealDTO);
+
+    /**
+     * 此方法用于：分页查询套餐
+     *
+     * @param setmealPageQueryDTO 分页查询条件
+     * @return Page<Setmeal>
+     */
+    Page<Setmeal> selectWithPage(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    /**
+     * 此方法用于：批量删除套餐
+     *
+     * @param ids 套餐 id 集合
+     * @return int
+     */
+    int deleteBatchById(List<Long> ids);
+
+    /**
+     * 此方法用于：根据套餐 id 查询套餐数据
+     *
+     * @param id 套餐 id
+     * @return SetmealVO
+     */
+    @Select("SELECT s.id, s.category_id, s.name, s.price, s.status, s.description, s.image,  s.update_time, c.name category_name FROM setmeal s LEFT JOIN category c ON s.category_id = c.id WHERE s.id = #{id}")
+    SetmealVO selectById(Long id);
+
+    /**
+     * 此方法用于：修改套餐信息
+     *
+     * @param setmealDTO 套餐数据
+     * @return int
+     */
+    int update(SetmealDTO setmealDTO);
+
+    /**
+     * 此方法用于：修改套餐状态
+     *
+     * @param status 状态
+     * @param id     套餐 id
+     * @return int
+     */
+    @Update("UPDATE setmeal SET status = #{status} WHERE id = #{id}")
+    int updateStatus(int status, Long id);
 }

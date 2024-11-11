@@ -46,14 +46,13 @@ public class DishController {
         int num = dishService.saveWithFlavor(dishDTO);
 
         // 清理 Redis 缓存
-        if (num > 0) {
-            // 构造 key
-            String key = "dish_" + dishDTO.getCategoryId();
-            redisTemplate.delete(key);
-            return Result.success("成功插入" + num + "条数据");
-        } else {
+        if (num <= 0)
             return Result.error("插入失败");
-        }
+
+        // 构造 key
+        String key = "dish_" + dishDTO.getCategoryId();
+        redisTemplate.delete(key);
+        return Result.success("成功插入" + num + "条数据");
     }
 
     /**
