@@ -38,7 +38,7 @@ public class CommonController {
 
         String fileName = file.getOriginalFilename(); // 原始文件名
 
-        if (fileName == null) return Result.error("文件不能为空");
+        if (fileName == null) return Result.error("文件不能为空", null);
 
         String extendName = fileName.substring(fileName.lastIndexOf(".")); // 扩展名
         String uuidName = UUID.randomUUID().toString(); // uuid

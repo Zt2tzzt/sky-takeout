@@ -51,7 +51,7 @@ public class SetmealController {
     @CacheEvict(cacheNames = "SetmealCache", allEntries = true)
     public Result<String> deleteById(List<Long> ids) {
         int i = setmealService.deleteBatch(ids);
-        return i > 0 ? Result.success("成功删除" + i + "条数据") : Result.error("删除失败");
+        return i > 0 ? Result.success("成功删除" + i + "条数据") : Result.error("删除失败", null);
     }
 
     @GetMapping("/{id}")
@@ -66,13 +66,13 @@ public class SetmealController {
     @CacheEvict(cacheNames = "SetmealCache", allEntries = true)
     public Result<String> modify(@RequestBody SetmealDTO setmealDTO) {
         int i = setmealService.modify(setmealDTO);
-        return i > 0 ? Result.success("成功修改" + i + "条数据") : Result.error("修改失败");
+        return i > 0 ? Result.success("成功修改" + i + "条数据") : Result.error("修改失败", null);
     }
 
     @PostMapping("/status/{status}")
     @CacheEvict(cacheNames = "SetmealCache", allEntries = true)
     public Result<String> startOrStop(@PathVariable int status, Long id) {
         int i = setmealService.startOrStop(status, id);
-        return i > 0 ? Result.success("成功修改" + i + "条数据") : Result.error("修改失败");
+        return i > 0 ? Result.success("成功修改" + i + "条数据") : Result.error("修改失败", null);
     }
 }

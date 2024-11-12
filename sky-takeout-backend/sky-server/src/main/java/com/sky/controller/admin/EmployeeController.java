@@ -123,7 +123,7 @@ public class EmployeeController {
         log.info("启用/禁用员工账号，员工id为：{},状态为：{}", id, status);
 
         int num = employeeService.enableAndDisable(status, id);
-        return num > 0 ? Result.success("成功修改" + num + "条数据") : Result.error("修改失败");
+        return num > 0 ? Result.success("成功修改" + num + "条数据") : Result.error("修改失败", null);
     }
 
     /**
@@ -153,6 +153,6 @@ public class EmployeeController {
         log.info("编辑员工信息，员工信息为：{}", employeeDTO);
 
         int num = employeeService.modifyEmp(employeeDTO);
-        return num > 0 ? Result.success("成功编辑" + num + "条员工数据") : Result.error("编辑失败");
+        return num > 0 ? Result.success("成功编辑" + num + "条员工数据") : Result.error("编辑失败", null);
     }
 }

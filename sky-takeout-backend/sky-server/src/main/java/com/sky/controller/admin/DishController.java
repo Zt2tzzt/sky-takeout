@@ -47,7 +47,7 @@ public class DishController {
 
         // 清理 Redis 缓存
         if (num <= 0)
-            return Result.error("插入失败");
+            return Result.error("插入失败", null);
 
         // 构造 key
         String key = "dish_" + dishDTO.getCategoryId();
@@ -121,7 +121,7 @@ public class DishController {
         int num = dishService.modifyWithFlavor(dishDTO);
 
         if (num <= 0)
-            return Result.error("修改失败");
+            return Result.error("修改失败", null);
 
         // 将 redis 中所有的菜品缓存数据清理掉：所有以 dish_ 开头的 key
         Set<Object> keys = redisTemplate.keys("dish_*"); // 查询时支持通配符；删除时不支持通配符

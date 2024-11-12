@@ -30,7 +30,7 @@ public class ShoppingCartController {
         log.info("添加购物车，商品信息：{}", shoppingCartDTO);
         int i = shoppingCartService.add(shoppingCartDTO);
 
-        return i > 0 ? Result.success("添加购物车成功") : Result.error("添加购物车失败");
+        return i > 0 ? Result.success("添加购物车成功") : Result.error("添加购物车失败", null);
     }
 
     @GetMapping("/list")
@@ -45,6 +45,6 @@ public class ShoppingCartController {
     @Operation(summary = "清空购物车")
     public Result<String> clean() {
         int i = shoppingCartService.cleanShoppingCart();
-        return i > 0 ? Result.success("清空购物车成功") : Result.error("清空购物车失败");
+        return i > 0 ? Result.success("清空购物车成功") : Result.error("清空购物车失败", null);
     }
 }

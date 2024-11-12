@@ -58,7 +58,7 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
             return true;
         } catch (Exception ex) {
             //4、不通过，响应401状态码
-            Result<String> result = Result.error("NOT_LOGIN");
+            Result<String> result = Result.error("NOT_LOGIN", null);
             String jsonRes = JSONObject.toJSONString(result);
             response.setStatus(401);
             response.getWriter().write(jsonRes);

@@ -34,10 +34,11 @@ public class Result<T> implements Serializable {
         return result;
     }
 
-    public static Result<String> error(String msg) {
-        Result<String> result = new Result<>();
+    public static <T> Result<T> error(String msg, T data) {
+        Result<T> result = new Result<>();
         result.msg = msg;
         result.code = 0;
+        result.data = data;
         return result;
     }
 

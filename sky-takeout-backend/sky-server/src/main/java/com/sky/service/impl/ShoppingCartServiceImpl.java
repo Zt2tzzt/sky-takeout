@@ -42,12 +42,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         // 判断要加入的商品，是否已经存在
         ShoppingCart shoppingCart = new ShoppingCart();
         BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
-        Long userId = BaseContext.getCurrentId();
+        Long userId = BaseContext.getCurrentId(); // 用户 id
         shoppingCart.setUserId(userId);
 
         List<ShoppingCart> cartRecordList = shoppingCartMapper.selectByShoppingCart(shoppingCart); // 只可能查出一条数据
 
-        // 如果存在，则数量加
+        // 如果存在，则数量加一
         if (cartRecordList != null && !cartRecordList.isEmpty()) {
             ShoppingCart cartRecord = cartRecordList.get(0);
             cartRecord.setNumber(cartRecord.getNumber() + 1);

@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     public Result exceptionHandler(BaseException ex) {
         log.error("异常信息：{}", ex.getMessage());
 
-        return Result.error(ex.getMessage());
+        return Result.error(ex.getMessage(), null);
     }
 
     /**
@@ -41,9 +41,9 @@ public class GlobalExceptionHandler {
         if (ex.getMessage().contains("Duplicate entry")) {
             String[] split = ex.getMessage().split(" ");
             String msg = split[2] + MessageConstant.ALREADY_EXISTS;
-            return Result.error(msg);
+            return Result.error(msg, null);
         } else {
-            return Result.error(MessageConstant.UNKNOWN_ERROR);
+            return Result.error(MessageConstant.UNKNOWN_ERROR, null);
         }
     }
 }
