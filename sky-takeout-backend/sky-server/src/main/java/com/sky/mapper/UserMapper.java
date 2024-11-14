@@ -11,6 +11,9 @@ public interface UserMapper {
     @Select("SELECT id, openid, name, phone, sex, id_number, avatar, create_time FROM user WHERE openid = #{openId}")
     User selectByOpenId(String openId);
 
+    @Select("SELECT id, openid, name, phone, sex, id_number, avatar, create_time FROM user WHERE id = #{id}")
+    User selectById(Long id);
+
     @Options(useGeneratedKeys = true, keyProperty = "id")
     @Insert("INSERT INTO user (openid, name, phone, sex, id_number, avatar, create_time) VALUES (#{openid}, #{name}, #{phone}, #{sex}, #{idNumber}, #{avatar}, #{createTime})")
     int insert(User user);

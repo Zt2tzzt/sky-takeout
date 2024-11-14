@@ -7,17 +7,16 @@ spring:
   main:
     allow-circular-references: true
   datasource:
-    druid:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/sky_take_out?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      username: root
-      password: wee1219
+    driver-class-name: ${sky.spring.datasource.druid.driver-class-name}
+    url: ${sky.spring.datasource.druid.url}
+    username: ${sky.spring.datasource.druid.username}
+    password: ${sky.spring.datasource.druid.password}
   data:
     redis:
-      host: localhost
-      port: 6379
-      password: wee1219
-      database: 0
+      host: ${spring.data.redis.host}
+      port: ${spring.data.redis.port}
+      password: ${spring.data.redis.password}
+      database: ${spring.data.redis.database}
 
 mybatis:
   #mapper配置文件
@@ -57,6 +56,13 @@ sky:
   wechat:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}
+    mchid: ${sky.wechat.mchid}
+    mch-serial-no: ${sky.wechat.mch-serial-no}
+    private-key-file-path: ${sky.wechat.private-key-file-path}
+    api-v3-key: ${sky.wechat.api-v3-key}
+    we-chat-pay-cert-file-path: ${sky.wechat.we-chat-pay-cert-file-path}
+    notify-url: ${sky.wechat.notify-url}
+    refund-notify-url: ${sky.wechat.refund-notify-url}
 
 springdoc:
   swagger-ui:
