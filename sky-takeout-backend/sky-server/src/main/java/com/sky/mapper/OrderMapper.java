@@ -18,7 +18,7 @@ public interface OrderMapper {
     int insert(Orders orders);
 
     /**
-     * 根据订单号查询订单
+     * 此方法用于：根据订单号查询订单
      *
      * @param orderNumber 订单号
      */
@@ -26,7 +26,7 @@ public interface OrderMapper {
     Orders getByNumber(String orderNumber);
 
     /**
-     * 修改订单信息
+     * 此方法用于：修改订单信息
      *
      * @param orders 订单
      */
@@ -41,4 +41,13 @@ public interface OrderMapper {
      */
     @Select("SELECT * FROM orders WHERE status = #{status} AND order_time < #{orderTime}")
     List<Orders> selectByStatusAndOrderTimeLT(int status, LocalDateTime orderTime);
+
+    /**
+     * 此方法用于：根据id查询订单
+     *
+     * @param id id
+     * @return Orders
+     */
+    @Select("SELECT * FROM orders WHERE id = #{id}")
+    Orders selectById(Long id);
 }

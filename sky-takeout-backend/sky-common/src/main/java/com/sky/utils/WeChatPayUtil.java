@@ -36,7 +36,6 @@ import java.util.List;
 @Component
 @Slf4j
 public class WeChatPayUtil {
-
     //微信支付下单接口地址
     public static final String JSAPI = "https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi";
 
@@ -54,20 +53,20 @@ public class WeChatPayUtil {
     private CloseableHttpClient getClient() {
         PrivateKey merchantPrivateKey;
         try {
-            //merchantPrivateKey商户API私钥，如何加载商户API私钥请看常见问题
+            // 加载商户 API 证书私钥文件
             merchantPrivateKey = PemUtil.loadPrivateKey(new FileInputStream(weChatProperties.getPrivateKeyFilePath()));
 
-            //加载平台证书文件
+            // 加载商户平台证书私钥文件
             X509Certificate x509Certificate = PemUtil.loadCertificate(new FileInputStream(weChatProperties.getWeChatPayCertFilePath()));
 
-            //wechatPayCertificates微信支付平台证书列表。你也可以使用后面章节提到的“定时更新平台证书功能”，而不需要关心平台证书的来龙去脉
+            // wechatPayCertificates 微信支付平台证书列表。你也可以使用后面章节提到的“定时更新平台证书功能”，而不需要关心平台证书的来龙去脉
             List<X509Certificate> wechatPayCertificates = Collections.singletonList(x509Certificate);
 
             WechatPayHttpClientBuilder builder = WechatPayHttpClientBuilder.create()
                     .withMerchant(weChatProperties.getMchid(), weChatProperties.getMchSerialNo(), merchantPrivateKey)
                     .withWechatPay(wechatPayCertificates);
 
-            // 通过WechatPayHttpClientBuilder构造的HttpClient，会自动的处理签名和验签
+            // 通过 WechatPayHttpClientBuilder 构造的 HttpClient，会自动的处理签名和验签
             return builder.build();
         } catch (FileNotFoundException e) {
             log.error("获取调用微信接口的客户端，异常：{}", e.getMessage());
@@ -84,7 +83,6 @@ public class WeChatPayUtil {
      */
     private String post(String url, String body) throws Exception {
         CloseableHttpClient httpClient = getClient();
-
         HttpPost httpPost = new HttpPost(url);
         httpPost.addHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.toString());
         httpPost.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
@@ -145,12 +143,10 @@ public class WeChatPayUtil {
         JSONObject amount = new JSONObject();
         amount.put("total", total.multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP).intValue());
         amount.put("currency", "CNY");
-
         jsonObject.put("amount", amount);
 
         JSONObject payer = new JSONObject();
         payer.put("openid", openid);
-
         jsonObject.put("payer", payer);
 
         String body = jsonObject.toJSONString();
@@ -169,44 +165,44 @@ public class WeChatPayUtil {
     public JSONObject pay(String orderNum, BigDecimal total, String description, String openid) throws Exception {
         //统一下单，生成预支付交易单
         String bodyAsString = jsapi(orderNum, total, description, openid);
+
         //解析返回结果
         JSONObject jsonObject = JSON.parseObject(bodyAsString);
         System.out.println(jsonObject);
 
         String prepayId = jsonObject.getString("prepay_id");
-        if (prepayId != null) {
-            String timeStamp = String.valueOf(System.currentTimeMillis() / 1000);
-            String nonceStr = RandomStringUtils.randomNumeric(32);
-            ArrayList<Object> list = new ArrayList<>();
-            list.add(weChatProperties.getAppid());
-            list.add(timeStamp);
-            list.add(nonceStr);
-            list.add("prepay_id=" + prepayId);
+        if (prepayId == null)
+            return jsonObject;
 
-            //二次签名，调起支付需要重新签名
-            StringBuilder stringBuilder = new StringBuilder();
-            for (Object o : list)
-                stringBuilder.append(o).append("\n");
+        String timeStamp = String.valueOf(System.currentTimeMillis() / 1000);
+        String nonceStr = RandomStringUtils.randomNumeric(32);
+        ArrayList<Object> list = new ArrayList<>();
+        list.add(weChatProperties.getAppid());
+        list.add(timeStamp);
+        list.add(nonceStr);
+        list.add("prepay_id=" + prepayId);
 
-            String signMessage = stringBuilder.toString();
-            byte[] message = signMessage.getBytes();
+        //二次签名，调起支付需要重新签名
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Object o : list)
+            stringBuilder.append(o).append("\n");
 
-            Signature signature = Signature.getInstance("SHA256withRSA");
-            signature.initSign(PemUtil.loadPrivateKey(new FileInputStream(weChatProperties.getPrivateKeyFilePath())));
-            signature.update(message);
-            String packageSign = Base64.getEncoder().encodeToString(signature.sign());
+        String signMessage = stringBuilder.toString();
+        byte[] message = signMessage.getBytes();
 
-            //构造数据给微信小程序，用于调起微信支付
-            JSONObject jo = new JSONObject();
-            jo.put("timeStamp", timeStamp);
-            jo.put("nonceStr", nonceStr);
-            jo.put("package", "prepay_id=" + prepayId);
-            jo.put("signType", "RSA");
-            jo.put("paySign", packageSign);
+        Signature signature = Signature.getInstance("SHA256withRSA");
+        signature.initSign(PemUtil.loadPrivateKey(new FileInputStream(weChatProperties.getPrivateKeyFilePath())));
+        signature.update(message);
+        String packageSign = Base64.getEncoder().encodeToString(signature.sign());
 
-            return jo;
-        }
-        return jsonObject;
+        //构造数据给微信小程序，用于调起微信支付
+        JSONObject jo = new JSONObject();
+        jo.put("timeStamp", timeStamp);
+        jo.put("nonceStr", nonceStr);
+        jo.put("package", "prepay_id=" + prepayId);
+        jo.put("signType", "RSA");
+        jo.put("paySign", packageSign);
+        return jo;
     }
 
     /**

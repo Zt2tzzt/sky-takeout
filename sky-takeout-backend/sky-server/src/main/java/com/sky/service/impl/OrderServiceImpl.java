@@ -1,6 +1,7 @@
 package com.sky.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.OrdersPaymentDTO;
@@ -14,6 +15,7 @@ import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.webSocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
@@ -23,8 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -35,15 +38,17 @@ public class OrderServiceImpl implements OrderService {
     private final ShoppingCartMapper shoppingCartMapper;
     private final WeChatPayUtil weChatPayUtil;
     private final UserMapper userMapper;
+    private final WebSocketServer webSocketServer;
 
     @Autowired
-    public OrderServiceImpl(OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, AddressBookMapper addressBookMapper, ShoppingCartMapper shoppingCartMapper,  WeChatPayUtil weChatPayUtil, UserMapper userMapper) {
+    public OrderServiceImpl(OrderMapper orderMapper, OrderDetailMapper orderDetailMapper, AddressBookMapper addressBookMapper, ShoppingCartMapper shoppingCartMapper, WeChatPayUtil weChatPayUtil, UserMapper userMapper, WebSocketServer webSocketServer) {
         this.orderMapper = orderMapper;
         this.orderDetailMapper = orderDetailMapper;
         this.addressBookMapper = addressBookMapper;
         this.shoppingCartMapper = shoppingCartMapper;
         this.weChatPayUtil = weChatPayUtil;
         this.userMapper = userMapper;
+        this.webSocketServer = webSocketServer;
     }
 
     @Transactional
@@ -95,6 +100,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderAmount(orders.getAmount())
                 .build();
     }
+
     /**
      * 此方法用于：订单支付
      *
@@ -111,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
         JSONObject jsonObject = weChatPayUtil.pay(
                 ordersPaymentDTO.getOrderNumber(), //商户订单号
                 new BigDecimal("0.01"), //支付金额，单位 元
-                "Zetian的测试订单", //商品描述
+                "ZeT1an的测试订单", //商品描述
                 user.getOpenid() //微信用户的 openid
         );
 
@@ -131,18 +137,48 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public void paySuccess(String outTradeNo) {
-
         // 根据订单号查询订单
         Orders ordersDB = orderMapper.getByNumber(outTradeNo);
 
         // 根据订单id更新订单的状态、支付方式、支付状态、结账时间
+        Long orderId = ordersDB.getId();
         Orders orders = Orders.builder()
-                .id(ordersDB.getId())
+                .id(orderId)
                 .status(Orders.TO_BE_CONFIRMED)
                 .payStatus(Orders.PAID)
                 .checkoutTime(LocalDateTime.now())
                 .build();
 
         orderMapper.updateByIds(orders);
+
+        HashMap<String, Object> claim = new HashMap<>(Map.of(
+                "type", 1,
+                "orderId", orderId,
+                "content", "订单号：" + outTradeNo
+        ));
+        String res = JSON.toJSONString(claim);
+        webSocketServer.sendToAllClient(res);
+    }
+
+    /**
+     * 此方法用于：用户催单
+     *
+     * @param id 订单 id
+     */
+    @Override
+    public void reminder(Long id) {
+        Orders orders = orderMapper.selectById(id);
+
+        if (orders == null)
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+
+        HashMap<String, Object> claim = new HashMap<>() {{
+            put("type", 2);
+            put("orderId", id);
+            put("content", "订单号：" + orders.getNumber());
+        }};
+
+        String res = JSON.toJSONString(claim);
+        webSocketServer.sendToAllClient(res);
     }
 }
