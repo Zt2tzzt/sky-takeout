@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @Mapper
@@ -50,4 +51,11 @@ public interface OrderMapper {
      */
     @Select("SELECT * FROM orders WHERE id = #{id}")
     Orders selectById(Long id);
+
+    /**
+     * 此方法用于：统计订单金额
+     * @param claim 查询条件
+     * @return Double
+     */
+    Double sumByStatusAndOrderTime(HashMap<String, Object> claim);
 }

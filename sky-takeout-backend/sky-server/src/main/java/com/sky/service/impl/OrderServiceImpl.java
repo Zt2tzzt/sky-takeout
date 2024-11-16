@@ -140,7 +140,7 @@ public class OrderServiceImpl implements OrderService {
         // 根据订单号查询订单
         Orders ordersDB = orderMapper.getByNumber(outTradeNo);
 
-        // 根据订单id更新订单的状态、支付方式、支付状态、结账时间
+        // 根据订单 id 更新订单的状态、支付方式、支付状态、结账时间
         Long orderId = ordersDB.getId();
         Orders orders = Orders.builder()
                 .id(orderId)
@@ -151,6 +151,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderMapper.updateByIds(orders);
 
+        // 通知管理端（浏览器）来单了
         HashMap<String, Object> claim = new HashMap<>(Map.of(
                 "type", 1,
                 "orderId", orderId,
@@ -177,7 +178,6 @@ public class OrderServiceImpl implements OrderService {
             put("orderId", id);
             put("content", "订单号：" + orders.getNumber());
         }};
-
         String res = JSON.toJSONString(claim);
         webSocketServer.sendToAllClient(res);
     }
