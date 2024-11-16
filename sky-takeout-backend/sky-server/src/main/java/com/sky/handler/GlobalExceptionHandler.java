@@ -16,34 +16,34 @@ import java.sql.SQLIntegrityConstraintViolationException;
 @Slf4j
 public class GlobalExceptionHandler {
     /**
-     * 捕获业务异常
+     * 此（重载）方法用于：捕获业务异常
      *
-     * @param ex
-     * @return
+     * @param ex 异常
+     * @return Result<Object>
      */
     @ExceptionHandler
-    public Result exceptionHandler(BaseException ex) {
+    public Result<Object> exceptionHandler(BaseException ex) {
         log.error("异常信息：{}", ex.getMessage());
 
         return Result.error(ex.getMessage(), null);
     }
 
     /**
-     * 此方法用于：重载处理数据库操作异常
+     * 此（重载）方法用于：处理数据库操作异常
      *
      * @param ex 异常
-     * @return Result
+     * @return Result<String>
      */
     @ExceptionHandler
     public Result<String> exceptionHandler(SQLIntegrityConstraintViolationException ex) {
         log.error("异常信息：{}", ex.getMessage());
 
-        if (ex.getMessage().contains("Duplicate entry")) {
-            String[] split = ex.getMessage().split(" ");
-            String msg = split[2] + MessageConstant.ALREADY_EXISTS;
-            return Result.error(msg, null);
-        } else {
+        if (!ex.getMessage().contains("Duplicate entry"))
             return Result.error(MessageConstant.UNKNOWN_ERROR, null);
-        }
+
+        String[] split = ex.getMessage().split(" ");
+        String msg = split[2] + MessageConstant.ALREADY_EXISTS;
+        return Result.error(msg, null);
+
     }
 }
