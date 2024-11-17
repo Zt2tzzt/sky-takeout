@@ -12,7 +12,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserReportVO implements Serializable {
-
     //日期，以逗号分隔，例如：2022-10-01,2022-10-02,2022-10-03
     private String dateList;
 
@@ -21,5 +20,4 @@ public class UserReportVO implements Serializable {
 
     //新增用户，以逗号分隔，例如：20,21,10
     private String newUserList;
-
 }
