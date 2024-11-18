@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,9 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+    @Serial
+    private static final long serialVersionUID = 6307473117236772568L;
     private Long id;
 
     //微信用户唯一标识

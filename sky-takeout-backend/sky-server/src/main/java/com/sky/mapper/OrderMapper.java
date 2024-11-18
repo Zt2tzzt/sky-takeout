@@ -54,8 +54,17 @@ public interface OrderMapper {
 
     /**
      * 此方法用于：统计订单金额
+     *
      * @param claim 查询条件
      * @return Double
      */
     Double sumByStatusAndOrderTime(HashMap<String, Object> claim);
+
+    /**
+     * 此方法用于：根据条件统计订单数量
+     *
+     * @param claim 查询条件
+     * @return Integer
+     */
+    Integer countByMap(HashMap<String, Object> claim);
 }

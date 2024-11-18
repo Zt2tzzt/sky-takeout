@@ -17,10 +17,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class AddressBook implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4220838857952309150L;
 
     private Long id;
-
     //用户id
     private Long userId;
 

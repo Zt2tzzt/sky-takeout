@@ -18,8 +18,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class SetmealDish implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = -4065867669835346469L;
     private Long id;
 
     //套餐id

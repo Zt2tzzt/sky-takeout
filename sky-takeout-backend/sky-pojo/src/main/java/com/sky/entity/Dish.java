@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,9 +18,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Dish implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+    @Serial
+    private static final long serialVersionUID = 5391729120624573428L;
     private Long id;
 
     //菜品名称

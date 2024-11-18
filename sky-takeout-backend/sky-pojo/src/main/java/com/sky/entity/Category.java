@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -12,9 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+    @Serial
+    private static final long serialVersionUID = 1599521444921652433L;
     private Long id;
 
     //类型: 1菜品分类 2套餐分类

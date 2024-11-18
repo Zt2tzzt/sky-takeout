@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Employee implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6864211148475560779L;
     @Schema(description = "员工Id")
     private Long id;
     @Schema(description = "用户名")

@@ -36,7 +36,7 @@ public class Orders implements Serializable {
     public static final Integer REFUND = 2;
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 9053499797813284006L;
 
     private Long id;
 

@@ -17,8 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class DishFlavor implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = 5638262913771095940L;
     private Long id;
     //菜品id
     private Long dishId;
