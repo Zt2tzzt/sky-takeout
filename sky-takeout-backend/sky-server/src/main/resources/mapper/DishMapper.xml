@@ -88,4 +88,17 @@
                  LEFT JOIN category c ON d.category_id = c.id
         WHERE d.category_id = #{id};
     </select>
+
+
+    <select id="countByMap" resultType="java.lang.Integer">
+        SELECT count(*) FROM dish
+        <where>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+        </where>
+    </select>
 </mapper>

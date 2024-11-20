@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface SetmealMapper {
@@ -94,4 +95,12 @@ public interface SetmealMapper {
      */
     @Update("UPDATE setmeal SET status = #{status} WHERE id = #{id}")
     int updateStatus(int status, Long id);
+
+    /**
+     * 此方法用于：根据条件统计套餐数量
+     *
+     * @param map 查询条件
+     * @return Integer
+     */
+    Integer countByMap(Map<String, Integer> map);
 }

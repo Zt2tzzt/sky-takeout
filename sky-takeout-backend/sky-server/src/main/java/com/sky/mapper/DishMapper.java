@@ -6,13 +6,13 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.DishVO;
-import io.swagger.v3.oas.annotations.Operation;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface DishMapper {
@@ -72,6 +72,7 @@ public interface DishMapper {
 
     /**
      * 此方法用于：修改菜品
+     *
      * @param dish 菜品对象
      * @return 修改记录数
      */
@@ -80,9 +81,19 @@ public interface DishMapper {
 
     /**
      * 此方法用于：根据分类 id 查询菜品
+     *
      * @param categoryId 分类 Id
      * @return Dish
      */
     @Select("SELECT id, name, category_id, price, image, description, status, create_time, update_time, create_user, update_user FROM dish WHERE category_id = #{categoryId}")
     List<Dish> selectByCategoryId(Long categoryId);
+
+
+    /**
+     * 此方法用于：根据条件统计菜品数量
+     *
+     * @param map 查询条件
+     * @return Integer
+     */
+    Integer countByMap(Map<String, Integer> map);
 }

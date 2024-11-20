@@ -1,5 +1,6 @@
 package com.sky.mapper;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -67,4 +68,13 @@ public interface OrderMapper {
      * @return Integer
      */
     Integer countByMap(HashMap<String, Object> claim);
+
+    /**
+     * 此方法用于：查询销量排名 top10
+     *
+     * @param begin 开始时间
+     * @param end   结束时间
+     * @return List<GoodsSalesDTO>
+     */
+    List<GoodsSalesDTO> selectSalesTop(LocalDateTime begin, LocalDateTime end);
 }

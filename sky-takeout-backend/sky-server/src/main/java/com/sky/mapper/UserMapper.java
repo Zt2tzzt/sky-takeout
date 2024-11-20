@@ -26,5 +26,5 @@ public interface UserMapper {
      * @param map 动态条件
      * @return 用户数量
      */
-    Integer countByMap(Map<String, LocalDateTime> map);
+    Integer countByMap(Map<String, Object> map);
 }
