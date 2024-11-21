@@ -4,7 +4,9 @@ import com.sky.vo.OrderReportVO;
 import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
+import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 public interface ReportService {
@@ -43,4 +45,11 @@ public interface ReportService {
      * @return SalesTop10ReportVO
      */
     SalesTop10ReportVO top10(LocalDate startDate, LocalDate endDate);
+
+    /**
+     * 此方法用于：导出运营数据报表
+     *
+     * @param response HttpServletResponse
+     */
+    void exportBusinessData(HttpServletResponse response) throws IOException;
 }

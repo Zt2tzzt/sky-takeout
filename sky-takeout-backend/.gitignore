@@ -4,3 +4,4 @@
 *.class
 application-dev.yml
 *.pem
+*.xlsx

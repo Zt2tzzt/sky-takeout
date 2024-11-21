@@ -5,14 +5,20 @@ import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.SalesTop10ReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.sky.service.WorkspaceService;
+import com.sky.vo.*;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,11 +33,13 @@ import java.util.stream.Stream;
 public class ReportServiceImpl implements ReportService {
     private final OrderMapper orderMapper;
     private final UserMapper userMapper;
+    private final WorkspaceService workspaceService;
 
     @Autowired
-    public ReportServiceImpl(OrderMapper orderMapper, UserMapper userMapper) {
+    public ReportServiceImpl(OrderMapper orderMapper, UserMapper userMapper, WorkspaceService workspaceService) {
         this.orderMapper = orderMapper;
         this.userMapper = userMapper;
+        this.workspaceService = workspaceService;
     }
 
     /**
@@ -193,9 +201,11 @@ public class ReportServiceImpl implements ReportService {
 
         List<GoodsSalesDTO> list = orderMapper.selectSalesTop(begin, end);
 
+        // 获取商品名称字符串
         List<String> names = list.stream().map(GoodsSalesDTO::getName).collect(Collectors.toList());
         String nameListStr = StringUtils.join(names, ",");
 
+        // 获取商品数量字符串
         List<Integer> sales = list.stream().map(GoodsSalesDTO::getNumber).collect(Collectors.toList());
         String numberListStr = StringUtils.join(sales, ",");
 
@@ -203,5 +213,77 @@ public class ReportServiceImpl implements ReportService {
                 .nameList(nameListStr)
                 .numberList(numberListStr)
                 .build();
+    }
+
+    /**
+     * 此方法用于：导出运营数据报表
+     *
+     * @param response HttpServletResponse
+     */
+    @Override
+    public void exportBusinessData(HttpServletResponse response) throws IOException {
+        // 获取最近 30 天的开始时间、结束时间
+        LocalDate startDate = LocalDate.now().minusDays(30);
+        LocalDate endDate = LocalDate.now().minusDays(1);
+
+        // 查询概览数据
+        LocalDateTime begin = LocalDateTime.of(startDate, LocalTime.MIN);
+        LocalDateTime end = LocalDateTime.of(endDate, LocalTime.MAX);
+        BusinessDataVO businessDataVO = workspaceService.getBusinessData(begin, end);
+
+        // 写入到 Excel 文件中
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("template/运营数据报表模板.xlsx");
+
+        // 基于模板文件，在内存中创建 Excel 文件
+        if (is == null) return;
+        XSSFWorkbook xlsx = new XSSFWorkbook(is);
+
+        // 表格设置时间范围
+        XSSFSheet sheet1 = xlsx.getSheet("Sheet1");
+        XSSFRow row = sheet1.getRow(1);
+        XSSFCell cell1 = row.getCell(1);
+        cell1.setCellValue("时间：" + startDate + " 至 " + endDate);
+
+        row = sheet1.getRow(3); // 获取第 4 行
+        // 表格设置营业额
+        row.getCell(2).setCellValue(businessDataVO.getTurnover());
+        // 表格设置订单完成率
+        row.getCell(4).setCellValue(businessDataVO.getOrderCompletionRate());
+        // 表格设置新增用户数
+        row.getCell(6).setCellValue(businessDataVO.getNewUsers());
+
+        row = sheet1.getRow(4); // 获取第 5 行
+        // 表格设置有效订单数
+        row.getCell(2).setCellValue(businessDataVO.getValidOrderCount());
+        // 表格设置平均客单价
+        row.getCell(4).setCellValue(businessDataVO.getUnitPrice());
+
+        // 表格设置明细数
+        List<LocalDate> dateList = getDateList(startDate, endDate);
+        LocalDate date;
+        for (int i = 0; i < dateList.size(); i++) {
+            // 查询某一天的营业数据
+            date = dateList.get(i);
+            begin = LocalDateTime.of(date, LocalTime.MIN);
+            end = LocalDateTime.of(date, LocalTime.MAX);
+            businessDataVO = workspaceService.getBusinessData(begin, end);
+
+            row = sheet1.getRow(i + 7);
+            row.getCell(1).setCellValue(date.toString());
+            row.getCell(2).setCellValue(businessDataVO.getTurnover());
+            row.getCell(3).setCellValue(businessDataVO.getValidOrderCount());
+            row.getCell(4).setCellValue(businessDataVO.getOrderCompletionRate());
+            row.getCell(5).setCellValue(businessDataVO.getUnitPrice());
+            row.getCell(6).setCellValue(businessDataVO.getNewUsers());
+        }
+
+        // 输出流写出文件给客户端。
+        ServletOutputStream os = response.getOutputStream();
+        xlsx.write(os);
+
+        // 释放资源
+        os.close();
+        is.close();
+        xlsx.close();
     }
 }

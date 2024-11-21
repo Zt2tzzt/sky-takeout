@@ -8,6 +8,7 @@ import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 @RestController
@@ -73,5 +75,11 @@ public class ReportController {
     ) {
         log.info("查询销量排名top10，开始日期：{}，结束日期：{}", startDate, endDate);
         return Result.success(reportService.top10(startDate, endDate));
+    }
+
+    @GetMapping("/export")
+    @Operation(summary = "导出运营数据报表")
+    public void export(HttpServletResponse response) throws IOException {
+        reportService.exportBusinessData(response);
     }
 }
