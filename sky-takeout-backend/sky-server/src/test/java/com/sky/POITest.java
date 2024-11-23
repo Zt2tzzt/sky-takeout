@@ -14,33 +14,31 @@ public class POITest {
      */
     private static void write() throws IOException {
         // 在内存中，创建一个工作簿
-        try (XSSFWorkbook xlsx = new XSSFWorkbook()) {
-            // 在工作簿中，创建一个工作表
-            XSSFSheet sheet1 = xlsx.createSheet("Sheet1");
+        XSSFWorkbook xlsx = new XSSFWorkbook();
+        // 在工作簿中，创建一个工作表
+        XSSFSheet sheet1 = xlsx.createSheet("Sheet1");
 
-            // 在工作表中，创建一行（rownum 编号从 0 开始）
-            XSSFRow row = sheet1.createRow(1);
+        // 在工作表中，创建一行（rownum 编号从 0 开始）
+        XSSFRow row = sheet1.createRow(1);
 
-            // 在行中，创建单元格（cellnum 编号从 0 开始），并写入内容。
-            row.createCell(1).setCellValue("姓名");
-            row.createCell(2).setCellValue("城市");
+        // 在行中，创建单元格（cellnum 编号从 0 开始），并写入内容。
+        row.createCell(1).setCellValue("姓名");
+        row.createCell(2).setCellValue("城市");
 
-            // 再创建一行
-            row = sheet1.createRow(2);
-            row.createCell(1).setCellValue("张三");
-            row.createCell(2).setCellValue("北京");
+        // 再创建一行
+        row = sheet1.createRow(2);
+        row.createCell(1).setCellValue("张三");
+        row.createCell(2).setCellValue("北京");
 
-            // 再创建一行
-            row = sheet1.createRow(3);
-            row.createCell(1).setCellValue("李四");
-            row.createCell(2).setCellValue("上海");
+        // 再创建一行
+        row = sheet1.createRow(3);
+        row.createCell(1).setCellValue("李四");
+        row.createCell(2).setCellValue("上海");
 
-            try (FileOutputStream fos = new FileOutputStream("info.xlsx")) {
-                xlsx.write(fos);
-                fos.close();
-                xlsx.close();
-            }
-        }
+        FileOutputStream fos = new FileOutputStream("info.xlsx");
+        xlsx.write(fos);
+        fos.close();
+        xlsx.close();
     }
 
     /**
