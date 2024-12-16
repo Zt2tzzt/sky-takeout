@@ -40,9 +40,11 @@ sky-takeout-backend/sky-server/pom.xml
 
 ## 四、HttpClient 发送请求步骤
 
-- 创建 `HttpClient` 对象；
-- 创建 `HttpGet` / `HttpPost` / … 请求对象；
-- 调用 `HttpClient` 的 `execute` 方法发送请求。
+1.创建 `HttpClient` 对象；
+
+2.创建 `HttpGet` / `HttpPost` / … 请求对象；
+
+3.调用 `HttpClient` 的 `execute` 方法发送请求。
 
 ## 五、HttpClient 的请求
 

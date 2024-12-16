@@ -8,7 +8,7 @@ import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +21,8 @@ import java.util.StringJoiner;
 @RestController
 @RequestMapping("/admin/dish")
 @Tag(name = "菜品相关接口")
-@Slf4j
 public class DishController {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(DishController.class);
     private final DishService dishService;
     private final RedisTemplate<Object, Object> redisTemplate;
 
