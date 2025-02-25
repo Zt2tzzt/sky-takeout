@@ -69,9 +69,33 @@ sky-takeout-backend/sky-server/pom.xml
 </dependency>
 ```
 
-2.在配置类中，加入 knife4j 相关配置；并设置静态资源映射；
+2.在配置类中，加入 knife4j 相关配置；并设置静态资源映射；这部分都是固定代码。
 
-- 这部分都是固定代码。
+Spring Boot2 集成 Knife4j 的自动配置。
+
+sky-takeout-backend/sky-server/src/main/java/com/sky/config/WebMvcConfiguration.java
+
+```java
+/**
+ * 通过knife4j生成接口文档
+ * @return
+*/
+@Bean
+public Docket docket() {
+    ApiInfo apiInfo = new ApiInfoBuilder()
+            .title("苍穹外卖项目接口文档")
+            .version("2.0")
+            .description("苍穹外卖项目接口文档")
+            .build();
+    Docket docket = new Docket(DocumentationType.SWAGGER_2)
+            .apiInfo(apiInfo)
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("com.sky.controller"))
+            .paths(PathSelectors.any())
+            .build();
+    return docket;
+}
+```
 
 Spring Boot3 集成 knife4j 的自动配置，[参考文档](https://www.cnblogs.com/TechMyZeal/p/18094999)
 
@@ -118,7 +142,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
 通过注解，可以控制生成的接口文档，使接口文档拥有更好的可读性，常用注解如下：
 
-Swagger2 注解
+#### 2.1.Swagger2 注解
 
 | **注解**          | **说明**                                               |
 | ----------------- | ------------------------------------------------------ |
@@ -130,7 +154,141 @@ Swagger2 注解
 | @ApiResponse      | 响应码                                                 |
 | @ApiResponses     | 多个响应码                                             |
 
-OpenAPI3 注解
+在Spring Boot中使用Swagger注解，可以有效地帮助生成API文档，以下是每个注解的用法示例：
+
+##### 2.1.1. `@Api`
+
+`@Api` 用于在Controller类上进行说明，提供API文档中该Controller的信息。
+
+```java
+import io.swagger.annotations.Api;
+import org.springframework.web.bind.annotation.RestController;
+
+@Api(tags = "用户管理", description = "提供用户相关的API接口")
+@RestController
+public class UserController {
+    // Controller方法
+}
+```
+
+##### 2.1.2. `@ApiModel`
+
+`@ApiModel` 用于在实体类（如DTO、VO、Entity等）上进行说明，通常用于描述数据模型。
+
+```java
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(description = "用户实体类")
+public class User {
+    private Long id;
+    private String name;
+    private Integer age;
+    
+    // getters and setters
+}
+```
+
+##### 2.1.3. `@ApiModelProperty`
+
+`@ApiModelProperty` 用于描述实体类属性的详细信息，比如是否必填、数据类型等。
+
+```java
+import io.swagger.annotations.ApiModelProperty;
+
+public class User {
+    @ApiModelProperty(value = "用户ID", required = true)
+    private Long id;
+
+    @ApiModelProperty(value = "用户姓名", example = "张三")
+    private String name;
+
+    @ApiModelProperty(value = "用户年龄", example = "25")
+    private Integer age;
+
+    // getters and setters
+}
+```
+
+##### 2.1.4. `@ApiOperation`
+
+`@ApiOperation` 用于描述Controller方法的功能和作用，提供关于该方法的详细说明。
+
+```java
+import io.swagger.annotations.ApiOperation;
+
+public class UserController {
+    
+    @ApiOperation(value = "获取用户详情", notes = "根据用户ID获取用户的详细信息")
+    @GetMapping("/users/{id}")
+    public User getUser(@PathVariable Long id) {
+        // 返回用户信息
+    }
+}
+```
+
+##### 2.1.5. `@ApiParam`
+
+`@ApiParam` 用于描述方法参数，常用于解释参数的用途和含义。
+
+```java
+import io.swagger.annotations.ApiParam;
+
+public class UserController {
+    
+    @ApiOperation(value = "根据ID更新用户信息")
+    @PutMapping("/users/{id}")
+    public User updateUser(
+        @ApiParam(value = "用户ID", required = true) @PathVariable Long id,
+        @ApiParam(value = "用户更新信息") @RequestBody User user) {
+        // 更新用户信息
+    }
+}
+```
+
+##### 2.1.6. `@ApiResponse`
+
+`@ApiResponse` 用于描述方法可能返回的响应状态码及对应的信息，通常配合 `@ApiOperation` 使用。
+
+```java
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+@ApiOperation(value = "删除用户", notes = "根据用户ID删除指定的用户")
+@ApiResponses({
+    @ApiResponse(code = 200, message = "删除成功"),
+    @ApiResponse(code = 404, message = "用户未找到"),
+    @ApiResponse(code = 500, message = "服务器内部错误")
+})
+@DeleteMapping("/users/{id}")
+public void deleteUser(@PathVariable Long id) {
+    // 删除用户操作
+}
+```
+
+##### 2.1.7. `@ApiResponses`
+
+`@ApiResponses` 用于描述多个响应码。它是 `@ApiResponse` 的集合，允许在方法上同时说明多个响应码的情况。
+
+```java
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+@ApiOperation(value = "获取用户列表", notes = "返回所有用户的列表")
+@ApiResponses({
+    @ApiResponse(code = 200, message = "请求成功"),
+    @ApiResponse(code = 400, message = "请求参数不正确"),
+    @ApiResponse(code = 500, message = "服务器内部错误")
+})
+@GetMapping("/users")
+public List<User> getUsers() {
+    // 返回用户列表
+}
+```
+
+这些注解为Swagger提供了丰富的文档描述，能够让API文档更加清晰、易懂。如果有任何特定的疑问，欢迎进一步交流！
+
+#### 2.2.OpenAPI3 注解
 
 | Swagger3                                                     | 注解说明                                                    |
 | ------------------------------------------------------------ | ----------------------------------------------------------- |
