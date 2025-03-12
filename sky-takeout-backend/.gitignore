@@ -3,5 +3,6 @@
 *.iml
 *.class
 application-dev.yml
+application-prd.yml
 *.pem
 *.xlsx

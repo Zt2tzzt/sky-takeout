@@ -14,7 +14,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Schema(description = "员工登录返回的数据格式")
 public class EmployeeLoginVO implements Serializable {
-
     @Schema(description = "主键值")
     private Long id;
 
@@ -26,5 +25,4 @@ public class EmployeeLoginVO implements Serializable {
 
     @Schema(description = "jwt令牌")
     private String token;
-
 }

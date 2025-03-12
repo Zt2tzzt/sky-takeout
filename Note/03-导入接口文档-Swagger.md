@@ -6,7 +6,7 @@
 
 第二步：前端开发人员和后端开发人员并行开发，同时，也可自测。
 
-第三步：前后端人员进行连调测试。
+第三步：前后端人员，进行连调测试。
 
 第四步：提交给测试人员进行最终测试。
 
@@ -14,8 +14,10 @@
 
 将资料中提供的两个接口文件，导入到 Api 测试工具中。
 
+````txt
 ├─📄 苍穹外卖-管理端接口.json
 └─📄 苍穹外卖-用户端接口.json
+````
 
 ## 二、Swagger
 
@@ -71,7 +73,7 @@ sky-takeout-backend/sky-server/pom.xml
 
 2.在配置类中，加入 knife4j 相关配置；并设置静态资源映射；这部分都是固定代码。
 
-Spring Boot2 集成 Knife4j 的自动配置。
+Spring Boot 2 集成 Knife4j 的自动配置。
 
 sky-takeout-backend/sky-server/src/main/java/com/sky/config/WebMvcConfiguration.java
 
@@ -97,7 +99,7 @@ public Docket docket() {
 }
 ```
 
-Spring Boot3 集成 knife4j 的自动配置，[参考文档](https://www.cnblogs.com/TechMyZeal/p/18094999)
+Spring Boot 3 集成 knife4j 的自动配置，[参考文档](https://www.cnblogs.com/TechMyZeal/p/18094999)
 
 sky-takeout-backend/sky-server/src/main/java/com/sky/config/WebMvcConfiguration.java
 
@@ -144,21 +146,21 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
 #### 2.1.Swagger2 注解
 
-| **注解**          | **说明**                                               |
-| ----------------- | ------------------------------------------------------ |
-| @Api              | 用在 Controller 类上，表示对类的说明。                 |
-| @ApiModel         | 用在实体（Entity、DTO、VO）类上                        |
-| @ApiModelProperty | 用在实体类属性上，描述属性信息                         |
-| @ApiOperation     | 用在方法上，例如Controller的方法，说明方法的用途、作用 |
-| @ApiParam         | 参数注释                                               |
-| @ApiResponse      | 响应码                                                 |
-| @ApiResponses     | 多个响应码                                             |
+| **注解**            | **说明**                                               |
+| ------------------- | ------------------------------------------------------ |
+| `@Api`              | 用在 Controller 类上，表示对类的说明。                 |
+| `@ApiModel`         | 用在实体（Entity、DTO、VO）类上                        |
+| `@ApiModelProperty` | 用在实体类属性上，描述属性信息                         |
+| `@ApiOperation`     | 用在方法上，例如Controller的方法，说明方法的用途、作用 |
+| `@ApiParam`         | 参数注释                                               |
+| `@ApiResponse`      | 响应码                                                 |
+| `@ApiResponses`     | 多个响应码                                             |
 
-在Spring Boot中使用Swagger注解，可以有效地帮助生成API文档，以下是每个注解的用法示例：
+在 Spring Boot 中使用 Swagger 注解，可以有效地帮助生成 API 文档，以下是每个注解的用法示例：
 
-##### 2.1.1. `@Api`
+##### 2.1.1. @Api
 
-`@Api` 用于在Controller类上进行说明，提供API文档中该Controller的信息。
+`@Api` 用于在 Controller 类上进行说明，提供 API 文档中该 Controller 的信息。
 
 ```java
 import io.swagger.annotations.Api;
@@ -171,9 +173,9 @@ public class UserController {
 }
 ```
 
-##### 2.1.2. `@ApiModel`
+##### 2.1.2. @ApiModel
 
-`@ApiModel` 用于在实体类（如DTO、VO、Entity等）上进行说明，通常用于描述数据模型。
+`@ApiModel` 用于在实体类（如 DTO、VO、Entity 等）上进行说明，通常用于描述数据模型。
 
 ```java
 import io.swagger.annotations.ApiModel;
@@ -188,9 +190,11 @@ public class User {
 }
 ```
 
-##### 2.1.3. `@ApiModelProperty`
+##### 2.1.3. @ApiModelProperty
 
-`@ApiModelProperty` 用于描述实体类属性的详细信息，比如是否必填、数据类型等。
+`@ApiModelProperty` 用于描述实体类属性的详细信息。
+
+- 比如是否必填、数据类型等。
 
 ```java
 import io.swagger.annotations.ApiModelProperty;
@@ -209,7 +213,7 @@ public class User {
 }
 ```
 
-##### 2.1.4. `@ApiOperation`
+##### 2.1.4. @ApiOperation
 
 `@ApiOperation` 用于描述Controller方法的功能和作用，提供关于该方法的详细说明。
 
@@ -226,7 +230,7 @@ public class UserController {
 }
 ```
 
-##### 2.1.5. `@ApiParam`
+##### 2.1.5. @ApiParam
 
 `@ApiParam` 用于描述方法参数，常用于解释参数的用途和含义。
 
@@ -245,7 +249,7 @@ public class UserController {
 }
 ```
 
-##### 2.1.6. `@ApiResponse`
+##### 2.1.6. @ApiResponse
 
 `@ApiResponse` 用于描述方法可能返回的响应状态码及对应的信息，通常配合 `@ApiOperation` 使用。
 
@@ -266,7 +270,7 @@ public void deleteUser(@PathVariable Long id) {
 }
 ```
 
-##### 2.1.7. `@ApiResponses`
+##### 2.1.7. @ApiResponses
 
 `@ApiResponses` 用于描述多个响应码。它是 `@ApiResponse` 的集合，允许在方法上同时说明多个响应码的情况。
 
@@ -286,9 +290,9 @@ public List<User> getUsers() {
 }
 ```
 
-这些注解为Swagger提供了丰富的文档描述，能够让API文档更加清晰、易懂。如果有任何特定的疑问，欢迎进一步交流！
+这些注解为 Swagger 提供了丰富的文档描述，能够让 API 文档更加清晰、易懂。
 
-#### 2.2.OpenAPI3 注解
+#### 2.2.OpenAPI 3 注解
 
 | Swagger3                                                     | 注解说明                                                    |
 | ------------------------------------------------------------ | ----------------------------------------------------------- |
