@@ -42,7 +42,7 @@ public class AutoFillAspect {
         if (args == null || args.length == 0) return;
         Object entity = args[0];
 
-        // 装备自动填充的数据（时间、修改人 Id）
+        // 装备自动填充的数据（时间、修改人Id）
         LocalDateTime now = LocalDateTime.now();
         Long currentId = BaseContext.getCurrentId();
 

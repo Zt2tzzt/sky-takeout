@@ -85,7 +85,7 @@ public class DishController {
 
         // 将 redis 中所有的菜品缓存数据清理掉：所有以 dish_ 开头的 key
         Set<Object> keys = redisTemplate.keys("dish_*"); // 查询时支持通配符；删除时不支持通配符
-        if (keys != null) redisTemplate.delete(keys);
+        redisTemplate.delete(keys);
 
         StringJoiner sj = new StringJoiner("；");
         map.forEach((name, num) -> sj.add(name + "已删除" + num + "条"));
