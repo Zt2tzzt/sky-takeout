@@ -24,12 +24,16 @@ public class SpringDataRedisTest {
 
         ValueOperations<Object, Object> valueOperations = redisTemplate.opsForValue(); // //string 数据操作
         log.info("valueOperations: {}", valueOperations);
+
         HashOperations<Object, Object, Object> hahsOperation = redisTemplate.opsForHash(); // hash 数据操作
         log.info("hahsOperation: {}", hahsOperation);
+
         ListOperations<Object, Object> listOperation = redisTemplate.opsForList(); // list 数据操作
         log.info("listOperation: {}", listOperation);
+
         SetOperations<Object, Object> setOpearion = redisTemplate.opsForSet(); // set 数据操作
         log.info("setOpearion: {}", setOpearion);
+
         ZSetOperations<Object, Object> zsetOperation = redisTemplate.opsForZSet(); // zset 数据操作
         log.info("zsetOperation: {}", zsetOperation);
     }
@@ -39,7 +43,7 @@ public class SpringDataRedisTest {
         ValueOperations<Object, Object> valueOperations = redisTemplate.opsForValue(); // //string 数据操作
 
         // SET
-        valueOperations.set("city", "北京");
+        valueOperations.set("city", "Vancouver");
 
         // GET
         String city = (String) valueOperations.get("city");
@@ -59,23 +63,23 @@ public class SpringDataRedisTest {
         HashOperations<Object, Object, Object> hashOperations = redisTemplate.opsForHash();
 
         // HSET
-        hashOperations.put("100", "name", "wee");
-        hashOperations.put("100", "age", "26");
+        hashOperations.put("lover", "name", "wee");
+        hashOperations.put("lover", "birth", "1219");
 
         // HGET
-        String name = (String) hashOperations.get("100", "name");
+        String name = (String) hashOperations.get("lover", "name");
         log.info("name: {}", name); // name: wee
 
         // HKEYS
-        Set<Object> keys = hashOperations.keys("100");
-        log.info("keys: {}", keys); // keys: [name, age]
+        Set<Object> keys = hashOperations.keys("lover");
+        log.info("keys: {}", keys); // keys: [name, birth]
 
         // HVALS
-        List<Object> values = hashOperations.values("100");
-        log.info("values: {}", values); // values: [wee, 26]
+        List<Object> values = hashOperations.values("lover");
+        log.info("values: {}", values); // values: [wee, 1219]
 
         // HDEL
-        Long idDelete = hashOperations.delete("100", "age");
+        Long idDelete = hashOperations.delete("lover", "birth");
         log.info("idDelete: {}", idDelete); // idDelete: 1
     }
 
@@ -164,7 +168,7 @@ public class SpringDataRedisTest {
      */
     @Test
     public void testCommon() {
-        //KEYS EXISTS TYPE DEL
+        // KEYS EXISTS TYPE DEL
         Set<Object> keys = redisTemplate.keys("*");
         log.info("keys: {}", keys); // keys: [mylist, code, zset1, city, name]
 

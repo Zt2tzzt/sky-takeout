@@ -56,7 +56,7 @@ spring:
 
 步骤三：编写配置类，创建 `RedisTemplate` 对象
 
-Spring Data Redis 中提供了一个高度封装的类：`RedisTemplate`，对相关 api 进行了归类封装，将同一类型操作封装为 operation 接口，具体分类如下：
+Spring Data Redis 中提供了一个高度封装的类：`RedisTemplate` 对相关 api 进行了归类封装，将同一类型操作封装为 operation 接口，具体分类如下：
 
 - `ValueOperations`：string 数据操作。
 - `SetOperations`：set 类型数据操作。
@@ -86,16 +86,19 @@ public class RedisConfiguration {
         log.info("开始创建 RedisTemplate 对象...");
 
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+      
         // 设置 Redis 连接工厂对象
         redisTemplate.setConnectionFactory(connectionFactory);
+      
         // 设置 Redis key 的序列化器
         redisTemplate.setKeySerializer(new StringRedisSerializer());
+      
         return redisTemplate;
     }
 }
 ```
 
-- 设置 Redis 连接工厂对象，Spring data redis 起步依赖会创建连接工厂的 Bean 对象，并放入 IOC 容器中。
+- 设置 Redis 连接工厂对象，Spring data redis 起步依赖，会创建连接工厂的 Bean 对象，并放入 IOC 容器中。
 - 设置 key 的序列化器后，用 Java 程序存储 key 时不会出现乱码。
 
 > 当前配置类不是必须的，因为 Spring Boot 框架会自动装配 `RedisTemplate` 对象，但是默认的 key 序列化器为 `JdkSerializationRedisSerializer`，导致存到 Redis 里的数据和原始数据有差别，故手动设置为 `StringRedisSerializer` 序列化器。
@@ -128,7 +131,7 @@ public class SpringDataRedisTest {
         ValueOperations<Object, Object> valueOperations = redisTemplate.opsForValue(); // string 数据操作
 
         // SET
-        valueOperations.set("city", "北京");
+        valueOperations.set("city", "Vancouver");
 
         // GET
         String city = (String) valueOperations.get("city");
@@ -175,23 +178,23 @@ public class SpringDataRedisTest {
         HashOperations<Object, Object, Object> hashOperations = redisTemplate.opsForHash();
 
         // HSET
-        hashOperations.put("100", "name", "wee");
-        hashOperations.put("100", "age", "26");
+        hashOperations.put("lover", "name", "wee");
+        hashOperations.put("lover", "birth", "1219");
 
         // HGET
-        String name = (String) hashOperations.get("100", "name");
+        String name = (String) hashOperations.get("lover", "name");
         log.info("name: {}", name); // name: wee
 
         // HKEYS
-        Set<Object> keys = hashOperations.keys("100");
-        log.info("keys: {}", keys); // keys: [name, age]
+        Set<Object> keys = hashOperations.keys("lover");
+        log.info("keys: {}", keys); // keys: [name, birth]
 
         // HVALS
-        List<Object> values = hashOperations.values("100");
-        log.info("values: {}", values); // values: [wee, 26]
+        List<Object> values = hashOperations.values("lover");
+        log.info("values: {}", values); // values: [wee, 1219]
 
         // HDEL
-        Long idDelete = hashOperations.delete("100", "age");
+        Long idDelete = hashOperations.delete("lover", "birth");
         log.info("idDelete: {}", idDelete); // idDelete: 1
     }
 }
@@ -332,7 +335,7 @@ sky-takeout-backend/sky-server/src/test/java/com/sky/SpringDataRedisTest.java
  */
 @Test
 public void testCommon() {
-    //KEYS EXISTS TYPE DEL
+    // KEYS EXISTS TYPE DEL
     Set<Object> keys = redisTemplate.keys("*");
     log.info("keys: {}", keys); // keys: [mylist, code, zset1, city, name]
 

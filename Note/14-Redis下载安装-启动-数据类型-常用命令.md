@@ -12,15 +12,15 @@ Redis 是用 C 语言开发的基于内存的一个开源高性能键值对（ke
 
 ![键值对存储](../NodeAssets/键值对存储.png)
 
-Redis 可以达到 100000+ 的 QPS（每秒内查询次数）。
+Redis 可以达到 100,000+ 的 QPS（每秒内查询次数）。
 
-Redis 存储的 value 类型比较丰富，也被称为结构化的 NoSql 数据库。
+Redis 存储的 value 类型比较丰富，所以它也被称为结构化的 NoSql 数据库。
 
 - NoSql（Not Only SQL），泛指**非关系型数据库**。NoSql 数据库并不是要取代关系型数据库，而是关系型数据库的补充。
 
 常见的关系型数据库（RDBMS）：
 
-- Mysql
+- MySQL
 - Oracle
 - DB2
 - SQLServer
@@ -138,7 +138,7 @@ redis-cli
 
 ## 三、Redis GUI 工具
 
-RedisInsight 是 Redis 官方出品的可视化管理工具。
+[RedisInsight](https://redis.io/insight/) 是 Redis 官方出品的可视化管理工具。
 
 在连接管理器中，配置要连接的 Redis 服务的地址、端口号。点击连接 Redis 服务。
 
@@ -203,11 +203,11 @@ hash 特别适合用于存储对象，常用命令：
 
 Redis 列表是简单的字符串列表，按照插入顺序排序，常用命令：
 
-- `LPUSH key value1 [value2]`；将一个或多个值插入到列表头部。
+- `LPUSH key value1 [value2]`；将一个或多个值，插入到列表头部。
 - `LRANGE key start stop`；获取列表指定范围内的元素。
 - `RPOP key`；移除并获取列表最后一个元素。
 - `LLEN key`；获取列表长度。
-- `BRPOP key1 [key2 ] timeout`；移出并获取列表的最后一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。
+- `BRPOP key1 [key2 ] timeout`；移出并获取列表的最后一个元素， 如果列表没有元素，会阻塞列表直到等待超时或发现可弹出元素为止。
 
 ![Redis列表](../NodeAssets/Redis列表.png)
 
@@ -219,7 +219,7 @@ LRANGE mylist 0 -1
 
 ### 5.4.集合命令
 
-Redis set 是 string 类型的无序集合。集合成员是唯一的，这就意味着集合中不能出现重复的数据，常用命令：
+Redis 集合 set 是 string 类型的无序集合。集合成员是唯一的，这就意味着集合中，不能出现重复的数据，常用命令：
 
 - `SADD key member1 [member2]`；向集合添加一个或多个成员。
 - `SMEMBERS key`；返回集合中的所有成员。
@@ -237,7 +237,7 @@ Redis 有序集合是 string 类型元素的集合，且不允许有重复成员
 - `ZADD key score1 member1 [score2 member2]`；向有序集合添加一个或多个成员。
 - `ZRANGE key start stop [WITHSCORES]`；通过索引区间返回有序集合中指定区间内的成员。
 - `ZINCRBY key increment member`；有序集合中对指定成员的分数加上增量 increment。
-- `ZREM key member [member ...]`；移除有序集合中的一个或多个成员。
+- `ZREM key member1 [member2 ...]`；移除有序集合中的一个或多个成员。
 
 ![Redis有序集合](../NodeAssets/Redis有序集合.png)
 

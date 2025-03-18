@@ -5,7 +5,7 @@
     <insert id="insertBatch" parameterType="com.sky.entity.DishFlavor">
         INSERT INTO dish_flavor(dish_id, name, value) VALUES
         <foreach collection="flavors" separator="," item="df">
-            (#{df.dishId},#{df.name},#{df.value})
+            (#{df.dishId}, #{df.name}, #{df.value})
         </foreach>
     </insert>
 
