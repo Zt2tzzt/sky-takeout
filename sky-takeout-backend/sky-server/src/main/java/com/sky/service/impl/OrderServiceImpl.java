@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
         int i = orderMapper.insert(orders);
         log.info("插入订单数据：{} 条", i);
 
-        // 在订单明细表中插入 n 条数据orders
+        // 在订单明细表中插入 n 条数据 orders
         List<OrderDetail> orderDetailList = shoppingCarts.stream().map(sc -> {
             OrderDetail orderDetail = OrderDetail.builder().orderId(orders.getId()).build();
             BeanUtils.copyProperties(sc, orderDetail);
