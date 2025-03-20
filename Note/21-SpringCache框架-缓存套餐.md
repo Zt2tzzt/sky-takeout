@@ -1,4 +1,4 @@
-# 缓存套餐
+# Spring Cache 框架、缓存套餐
 
 ## 一、Spring Cache
 
@@ -41,6 +41,8 @@ sky-takeout-backend/sky-server/pom.xml
 ### 2.1.@EnableCaching 注解
 
 在启动类上，加入 `@EnableCaching` 注解。
+
+sky-takeout-backend/sky-server/src/main/java/com/sky/SkyApplication.java
 
 ```java
 ……
@@ -158,7 +160,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableTransactionManagement //开启注解方式的事务管理
+@EnableTransactionManagement // 开启注解方式的事务管理
 @Slf4j
 @EnableCaching
 public class SkyApplication {

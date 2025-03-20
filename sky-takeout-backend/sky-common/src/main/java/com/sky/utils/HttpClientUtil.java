@@ -120,6 +120,18 @@ public class HttpClientUtil {
     }
 
     /**
+     * 此方法用于：构建请求配置
+     *
+     * @return RequestConfig
+     */
+    private static RequestConfig builderRequestConfig() {
+        return RequestConfig.custom()
+                .setConnectTimeout(TIMEOUT_MSEC)
+                .setConnectionRequestTimeout(TIMEOUT_MSEC)
+                .setSocketTimeout(TIMEOUT_MSEC).build();
+    }
+
+    /**
      * 发送POST方式请求
      *
      * @param url      url
@@ -165,12 +177,5 @@ public class HttpClientUtil {
         }
 
         return resultString;
-    }
-
-    private static RequestConfig builderRequestConfig() {
-        return RequestConfig.custom()
-                .setConnectTimeout(TIMEOUT_MSEC)
-                .setConnectionRequestTimeout(TIMEOUT_MSEC)
-                .setSocketTimeout(TIMEOUT_MSEC).build();
     }
 }

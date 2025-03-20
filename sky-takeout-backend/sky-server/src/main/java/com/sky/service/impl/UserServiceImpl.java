@@ -21,6 +21,7 @@ import java.util.HashMap;
 @Slf4j
 public class UserServiceImpl implements UserService {
     private static final String WX_LOGIN = "https://api.weixin.qq.com/sns/jscode2session";
+
     @Autowired
     private WeChatProperties weChatProperties;
     @Autowired
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
      * 此方法用于：发送请求，获取微信用户的 openid
      *
      * @param code 微信端发送的临时登录凭证
-     * @return
+     * @return openid
      */
     private String getOpenId(String code) {
         HashMap<String, String> claim = new HashMap<>() {{

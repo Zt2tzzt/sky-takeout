@@ -92,7 +92,7 @@ public class CategoryController {
     @PostMapping("/status/{status}")
     @Operation(summary = "启用禁用分类")
     public Result<String> startOrStop(@PathVariable("status") Integer status, Long id){
-        categoryService.startOrStop(status,id);
+        categoryService.startOrStop(status, id);
 
         // 将 redis 中分类缓存数据清理掉：以 dish_ 开头的 key
         String key = "dish_" + id;

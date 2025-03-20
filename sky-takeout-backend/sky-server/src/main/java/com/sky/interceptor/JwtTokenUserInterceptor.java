@@ -38,9 +38,9 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
      * @return Boolean
      */
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
-        //判断当前拦截到的是Controller的方法还是其他资源
+        // 判断当前拦截到的是 Controller 的方法还是其他资源
         if (!(handler instanceof HandlerMethod)) {
-            //当前拦截到的不是动态方法，直接放行
+            // 当前拦截到的不是动态方法，直接放行
             return true;
         }
 
@@ -52,12 +52,13 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), token);
             Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
+
             log.info("当前用户id：{}", userId); // 获取到员工 Id，并存入 ThreadLocal
             BaseContext.setCurrentId(userId);
             //3、通过，放行
             return true;
         } catch (Exception ex) {
-            //4、不通过，响应401状态码
+            //4、不通过，响应 401 状态码
             Result<String> result = Result.error("NOT_LOGIN", null);
             String jsonRes = JSONObject.toJSONString(result);
             response.setStatus(401);

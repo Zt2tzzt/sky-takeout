@@ -21,7 +21,7 @@ sky-takeout-backend/sky-server/pom.xml
 </dependency>
 ```
 
-> 阿里云的 aliyun-sdk-oss 依赖中，传递了 HttpClient 的依赖。
+> 事实上，阿里云的 aliyun-sdk-oss 依赖中，传递了 HttpClient 的依赖。
 >
 > ```xml
 > <dependency>
@@ -277,6 +277,18 @@ public class HttpClientUtil {
     }
 
     /**
+     * 此方法用于：构建请求配置
+     *
+     * @return RequestConfig
+     */
+    private static RequestConfig builderRequestConfig() {
+        return RequestConfig.custom()
+                .setConnectTimeout(TIMEOUT_MSEC)
+                .setConnectionRequestTimeout(TIMEOUT_MSEC)
+                .setSocketTimeout(TIMEOUT_MSEC).build();
+    }
+
+    /**
      * 发送POST方式请求
      *
      * @param url      url
@@ -297,6 +309,7 @@ public class HttpClientUtil {
                 //构造json格式数据
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.putAll(paramMap);
+
                 StringEntity entity = new StringEntity(jsonObject.toString(), "utf-8");
                 //设置请求编码
                 entity.setContentEncoding("utf-8");
@@ -321,13 +334,6 @@ public class HttpClientUtil {
         }
 
         return resultString;
-    }
-
-    private static RequestConfig builderRequestConfig() {
-        return RequestConfig.custom()
-                .setConnectTimeout(TIMEOUT_MSEC)
-                .setConnectionRequestTimeout(TIMEOUT_MSEC)
-                .setSocketTimeout(TIMEOUT_MSEC).build();
     }
 }
 ```
