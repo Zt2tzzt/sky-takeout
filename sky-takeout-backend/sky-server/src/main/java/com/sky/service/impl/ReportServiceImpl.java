@@ -86,6 +86,7 @@ public class ReportServiceImpl implements ReportService {
             if (sum == null) sum = 0.0;
             return sum;
         }).toList();
+
         String sumListStr = StringUtils.join(sumList, ",");
 
         return TurnoverReportVO.builder()
@@ -149,6 +150,7 @@ public class ReportServiceImpl implements ReportService {
         // 获取每天的订单总数、有效订单数
         ArrayList<Integer> orderCountList = new ArrayList<>();
         ArrayList<Integer> validOrderCountList = new ArrayList<>();
+
         for (LocalDate date : dateList) {
             LocalDateTime begin = LocalDateTime.of(date, LocalTime.MIN);
             LocalDateTime end = LocalDateTime.of(date, LocalTime.MAX);
@@ -165,6 +167,7 @@ public class ReportServiceImpl implements ReportService {
             Integer validOrderCount = orderMapper.countByMap(claim);
             validOrderCountList.add(validOrderCount);
         }
+
         String orderCountListStr = StringUtils.join(orderCountList, ",");
         String validOrderCountListStr = StringUtils.join(validOrderCountList, ",");
 

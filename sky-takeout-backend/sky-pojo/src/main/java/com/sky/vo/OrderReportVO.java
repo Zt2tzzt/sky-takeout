@@ -15,6 +15,7 @@ import java.io.Serializable;
 public class OrderReportVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 4160444566542239361L;
+
     //日期，以逗号分隔，例如：2022-10-01,2022-10-02,2022-10-03
     private String dateList;
 
